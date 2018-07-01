@@ -1,14 +1,14 @@
 package __google_.io;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-public class Proxy extends Thread{
-    private final Reader in;
-    private final Writer out;
+public class ProxyStream extends Thread{
+    private final InputStream in;
+    private final OutputStream out;
 
-    public Proxy(Reader in, Writer out){
+    public ProxyStream(InputStream in, OutputStream out){
         this.in = in;
         this.out = out;
     }

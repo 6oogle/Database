@@ -1,4 +1,4 @@
-package net;
+package __google_.net;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

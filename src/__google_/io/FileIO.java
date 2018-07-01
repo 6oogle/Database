@@ -1,4 +1,4 @@
-package io;
+package __google_.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -44,6 +44,16 @@ public class FileIO {
         }catch (IOException ex){}
         close(reader);
         return buffer.toString();
+    }
+
+    public static void remove(String strFile){
+        getFile(strFile).delete();
+    }
+
+    public static File[] getFiles(String strFile){
+        File file = getFile(strFile);
+        if(!file.exists() || file.isDirectory())return null;
+        return file.listFiles();
     }
 
     private static File getFile(String file){

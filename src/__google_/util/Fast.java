@@ -1,4 +1,4 @@
-package util;
+package __google_.util;
 
 public class Fast {
     public static String toLowerEN(String line){

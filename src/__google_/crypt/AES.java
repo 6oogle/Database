@@ -1,4 +1,4 @@
-package __google_.crypt;
+package crypt;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;

@@ -1,6 +1,4 @@
-package __google_;
-
-import __google_.util.Testing;
+import util.Testing;
 
 public class Main {
 

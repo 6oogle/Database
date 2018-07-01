@@ -1,4 +1,4 @@
-package __google_.io;
+package io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

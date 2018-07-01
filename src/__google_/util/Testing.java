@@ -1,12 +1,12 @@
-package __google_.util;
+package util;
 
-import __google_.crypt.AES;
-import __google_.crypt.Blowfish;
-import __google_.crypt.Crypt;
-import __google_.crypt.RSA;
-import __google_.io.FileIO;
-import __google_.net.Client;
-import __google_.net.Server;
+import crypt.AES;
+import crypt.Blowfish;
+import crypt.Crypt;
+import crypt.RSA;
+import io.FileIO;
+import net.Client;
+import net.Server;
 
 import java.util.function.Consumer;
 

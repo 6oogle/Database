@@ -1,4 +1,4 @@
-package __google_.io;
+package io;
 
 import java.io.IOException;
 import java.io.InputStream;

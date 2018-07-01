@@ -1,4 +1,4 @@
-package __google_.crypt;
+package crypt;
 
 import sun.security.rsa.RSAPrivateCrtKeyImpl;
 import sun.security.rsa.RSAPrivateKeyImpl;

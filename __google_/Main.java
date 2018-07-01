@@ -1,25 +1,28 @@
 package __google_;
 
 import __google_.crypt.AES;
+import __google_.crypt.Blowfish;
 import __google_.crypt.Crypt;
+import __google_.crypt.RSA;
 import __google_.net.Client;
 import __google_.net.Server;
 
 public class Main {
 
     public static void main(String[] args) {
-        net();
+        RSA();
     }
 
     public static void AES(){
-        Crypt crypt = new AES("LolLolLolLolLolL");
+        defCrypt(new AES("LolLolLolLolLolL"));
+    }
 
-        String line = "Lol 12355";
-        String encoded = crypt.encode(line);
+    public static void RSA(){
+        defCrypt(new RSA());
+    }
 
-        System.out.println(line);
-        System.out.println(encoded);
-        System.out.println(crypt.decode(encoded));
+    public static void Blowfish(){
+        defCrypt(new Blowfish("LolLolLolLolLolL"));
     }
 
     public static void net(){
@@ -37,5 +40,14 @@ public class Main {
         System.out.println("Client input -> " + client.read());
         client.close();
         server.close();
+    }
+
+    private static void defCrypt(Crypt crypt){
+        String line = "Lol 12355";
+        String encoded = crypt.encode(line);
+
+        System.out.println(line);
+        System.out.println(encoded);
+        System.out.println(crypt.decode(encoded));
     }
 }

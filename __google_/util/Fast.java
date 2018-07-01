@@ -22,4 +22,26 @@ public class Fast {
         }
         return new String(result);
     }
+
+    public static String toLowerRU(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 1071 && c < 1104) c = (char)(c + 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
+
+    public static String toUpperRU(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 1039 && c < 1072) c = (char)(c - 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
 }

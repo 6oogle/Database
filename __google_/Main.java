@@ -6,23 +6,67 @@ import __google_.crypt.Crypt;
 import __google_.crypt.RSA;
 import __google_.net.Client;
 import __google_.net.Server;
+import __google_.util.Fast;
+import __google_.util.Testing;
 
 public class Main {
 
+    private static final int iterations = 100000;
+
     public static void main(String[] args) {
-        RSA();
+        fastLowerEN();
+        fastUpperEN();
     }
 
     public static void AES(){
+        //Key size only 16 | 24 | 32
         defCrypt(new AES("LolLolLolLolLolL"));
     }
 
     public static void RSA(){
+        //Async crypt
         defCrypt(new RSA());
     }
 
     public static void Blowfish(){
-        defCrypt(new Blowfish("LolLolLolLolLolL"));
+        //Custom key size
+        defCrypt(new Blowfish("LolLolLolLolLolLaff"));
+    }
+
+    public static void fastLowerEN(){
+        String lineEN = "aAbBcCdDeEfF123456@@%";
+
+        System.out.println(Fast.toLowerEN(lineEN));
+        System.out.println("Fast -> " + Testing.test((l) -> Fast.toLowerEN(l), lineEN, iterations));
+        System.out.println(lineEN.toLowerCase());
+        System.out.println("Default -> " + Testing.test((l) -> l.toLowerCase(), lineEN, iterations));
+    }
+
+    public static void fastUpperEN(){
+        String lineEN = "aAbBcCdDeEfF123456@@%";
+
+        System.out.println(Fast.toUpperEN(lineEN));
+        System.out.println("Fast -> " + Testing.test((l) -> Fast.toUpperEN(l), lineEN, iterations));
+        System.out.println(lineEN.toUpperCase());
+        System.out.println("Default -> " + Testing.test((l) -> l.toUpperCase(), lineEN, iterations));
+    }
+
+    public static void fastLowerRU(){
+        String lineRU = "аАбБвВгГдДеЕёЁ123456@@%";
+
+        System.out.println(Fast.toLowerRU(lineRU));
+        System.out.println("Fast -> " + Testing.test((l) -> Fast.toLowerRU(l), lineRU, iterations));
+        System.out.println(lineRU.toLowerCase());
+        System.out.println("Default -> " + Testing.test((l) -> l.toLowerCase(), lineRU, iterations));
+    }
+
+    public static void fastUpperRU(){
+        String lineRU = "аАбБвВгГдДеЕёЁ123456@@%";
+
+        System.out.println(Fast.toUpperRU(lineRU));
+        System.out.println("Fast -> " + Testing.test((l) -> Fast.toUpperRU(l), lineRU, iterations));
+        System.out.println(lineRU.toUpperCase());
+        System.out.println("Default -> " + Testing.test((l) -> l.toUpperCase(), lineRU, iterations));
     }
 
     public static void net(){

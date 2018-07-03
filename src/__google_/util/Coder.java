@@ -9,10 +9,8 @@ public class Coder {
     public static String eMap(Map<String, String> map){
         if(map == null)return "";
         StringBuilder buffer = new StringBuilder();
-        for(Map.Entry<String, String> entry : map.entrySet()){
-            buffer.setLength(buffer.length() + entry.getKey().length() + entry.getValue().length() + 2);//'\n' and '=' size
+        for(Map.Entry<String, String> entry : map.entrySet())
             buffer.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
-        }
         return buffer.toString();
     }
 
@@ -31,10 +29,8 @@ public class Coder {
     public static String eList(List<String> list){
         if(list == null)return "";
         StringBuilder buffer = new StringBuilder();
-        for(String line : list){
-            buffer.setLength(buffer.length() + line.length() + 1);
+        for(String line : list)
             buffer.append(line).append('\n');
-        }
         return buffer.toString();
     }
 

@@ -24,6 +24,7 @@ public class FileIO {
             }
             writer = new BufferedWriter(new FileWriter(file));
             writer.write(write);
+            writer.flush();
         }catch (IOException ex){}
         close(writer);
     }
@@ -62,8 +63,6 @@ public class FileIO {
     private static void close(Closeable closeable){
         if(closeable == null)return;
         try{
-            if(closeable instanceof Flushable)
-                ((Flushable) closeable).flush();
             closeable.close();
         }catch (IOException ex){
             //Close

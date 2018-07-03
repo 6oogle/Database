@@ -20,8 +20,8 @@ public class Coder {
         Map<String, String> map = new HashMap<>(split.length);
         for(String line : split){
             String spl[] = line.split("=");
-            if(spl.length != 2) continue;
-            map.put(spl[0], spl[1]);
+            if(spl.length == 1) map.put(spl[0], "");
+            else map.put(spl[0], spl[1]);
         }
         return map;
     }

@@ -23,8 +23,7 @@ public class FileIO {
                 file.createNewFile();
             }
             writer = new BufferedWriter(new FileWriter(file));
-            for(char c : write.toCharArray())
-                writer.write(c);
+            writer.write(write);
         }catch (IOException ex){}
         close(writer);
     }

@@ -1,4 +1,4 @@
-import __google_.Testing;
+package __google_;
 
 public class Main {
 

@@ -17,7 +17,7 @@ public class Coder {
     public static Map<String, String> dMap(String str){
         if(str == null)return new HashMap<>();
         String split[] = str.split("\n");
-        Map<String, String> map = new HashMap<>(split.length);
+        Map<String, String> map = new HashMap<>();
         for(String line : split){
             String spl[] = line.split("=");
             if(spl.length == 1) map.put(spl[0], "");

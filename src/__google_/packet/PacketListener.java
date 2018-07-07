@@ -13,6 +13,6 @@ public class PacketListener implements NetListener{
 
     @Override
     public void read(String str) {
-
+        listener.read(Packet.getPacket(str));
     }
 }

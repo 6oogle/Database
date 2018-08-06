@@ -12,18 +12,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-public class RSA extends Crypt{
-
+public class RSA extends AsyncCrypt{
     private final boolean privateKeyEncode;
-    private PublicKey publicKey;
-    private PrivateKey privateKey;
 
     public RSA(int size, boolean privateKeyEncode){
         super("RSA");
         this.privateKeyEncode = privateKeyEncode;
         KeyPair pair = generate(size);
-        publicKey = pair.getPublic();
-        privateKey = pair.getPrivate();
+        publicKey = privateKeyEncode ? pair.getPrivate() : pair.getPublic();
+        privateKey = privateKeyEncode ? pair.getPublic() : pair.getPrivate();
     }
 
     public RSA(int size){
@@ -38,10 +35,10 @@ public class RSA extends Crypt{
         super("RSA");
         this.privateKeyEncode = privateKeyEncode;
         try{
-            if(publicKey != null)
-                this.publicKey = RSAPublicKeyImpl.parse(new DerValue(publicKey));
-            if(privateKey != null)
-                this.privateKey = RSAPrivateKeyImpl.parse(new DerValue(privateKey));
+            if((privateKeyEncode ? privateKey : publicKey) != null)
+                this.publicKey = RSAPublicKeyImpl.parse(new DerValue(privateKeyEncode ? privateKey : publicKey));
+            if((privateKeyEncode ? publicKey : privateKey) != null)
+                this.privateKey = RSAPrivateKeyImpl.parse(new DerValue(privateKeyEncode ? publicKey : privateKey));
         }catch (IOException ex){
             throw new IllegalArgumentException(ex);
         }
@@ -59,14 +56,8 @@ public class RSA extends Crypt{
         this(null, privateKey, privateKeyEncode);
     }
 
-    @Override
-    protected Key encodeKey() {
-        return privateKeyEncode ? publicKey : privateKey;
-    }
-
-    @Override
-    protected Key decodeKey() {
-        return privateKeyEncode ? privateKey : publicKey;
+    public boolean isPrivateKeyEncode() {
+        return privateKeyEncode;
     }
 
     private KeyPair generate(int size){

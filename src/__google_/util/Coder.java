@@ -59,6 +59,7 @@ public class Coder {
     }
 
     public static double toDouble(String line){
+        if(line == null)return 0;
         try{
             return Double.valueOf(line);
         }catch (NumberFormatException ex){
@@ -67,6 +68,7 @@ public class Coder {
     }
 
     public static float toFloat(String line){
+        if(line == null)return 0;
         try{
             return Float.valueOf(line);
         }catch (NumberFormatException ex){
@@ -75,6 +77,7 @@ public class Coder {
     }
 
     public static long toLong(String line){
+        if(line == null)return 0;
         try{
             return Long.decode(line);
         }catch (NumberFormatException ex){
@@ -96,6 +99,7 @@ public class Coder {
     }
 
     public static int toInt(String line){
+        if(line == null)return 0;
         try{
             return Integer.decode(line);
         }catch (NumberFormatException ex){
@@ -112,6 +116,7 @@ public class Coder {
     }
 
     public static short toShort(String line){
+        if(line == null)return 0;
         try{
             return Short.decode(line);
         }catch (NumberFormatException ex){
@@ -126,6 +131,7 @@ public class Coder {
     }
 
     public static byte toByte(String line){
+        if(line == null)return 0;
         try{
             return Byte.decode(line);
         }catch (NumberFormatException ex){

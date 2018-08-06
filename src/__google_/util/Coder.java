@@ -6,7 +6,35 @@ import java.util.List;
 import java.util.Map;
 
 public class Coder {
-    public static String eMap(Map<String, String> map){
+    public static String toString(boolean b){
+        return b + "";
+    }
+
+    public static String toString(double d){
+        return d + "";
+    }
+
+    public static String toString(float f){
+        return f + "";
+    }
+
+    public static String toString(long l){
+        return l + "";
+    }
+
+    public static String toString(int i){
+        return i + "";
+    }
+
+    public static String toString(short s){
+        return s + "";
+    }
+
+    public static String toString(byte b){
+        return b + "";
+    }
+
+    public static String toString(Map<String, String> map){
         if(map == null)return "";
         StringBuilder buffer = new StringBuilder();
         for(Map.Entry<String, String> entry : map.entrySet())
@@ -14,7 +42,143 @@ public class Coder {
         return buffer.toString();
     }
 
-    public static Map<String, String> dMap(String str){
+    public static String toString(List<String> list){
+        if(list == null)return "";
+        StringBuilder buffer = new StringBuilder();
+        for(String line : list)
+            buffer.append(line).append('\n');
+        return buffer.toString();
+    }
+
+    public static boolean toBoolean(String line){
+        return line != null && line.equals("true");
+    }
+
+    public static boolean toBoolean(byte array[]){
+        return array.length != 0 && array[0] == 0x1;
+    }
+
+    public static double toDouble(String line){
+        try{
+            return Double.valueOf(line);
+        }catch (NumberFormatException ex){
+            return 0;
+        }
+    }
+
+    public static float toFloat(String line){
+        try{
+            return Float.valueOf(line);
+        }catch (NumberFormatException ex){
+            return 0;
+        }
+    }
+
+    public static long toLong(String line){
+        try{
+            return Long.decode(line);
+        }catch (NumberFormatException ex){
+            return 0;
+        }
+    }
+
+    public static long toLong(byte array[]){
+        if(array.length != 8)return toInt(array);
+        return  (long)array[0] << 56 & 0xff00000000000000L
+                | (long)array[1] << 48 & 0xff000000000000L
+                | (long)array[2] << 40 & 0xff0000000000L
+                | (long)array[3] << 32 & 0xff00000000L
+                | (long)array[4] << 24 & 0xff000000L
+                | (long)array[5] << 16 & 0xff0000L
+                | (long)array[6] << 8 & 0xff00L
+                | (long)array[7] & 0xffL;
+        //Using '&' for negative numbers
+    }
+
+    public static int toInt(String line){
+        try{
+            return Integer.decode(line);
+        }catch (NumberFormatException ex){
+            return 0;
+        }
+    }
+
+    public static int toInt(byte array[]){
+        if(array.length != 4)return toShort(array);
+        return  array[0] << 24 & 0xff000000 |
+                array[1] << 16 & 0xff0000 |
+                array[2] << 8 & 0xff00 |
+                array[3] & 0xff;
+    }
+
+    public static short toShort(String line){
+        try{
+            return Short.decode(line);
+        }catch (NumberFormatException ex){
+            return 0;
+        }
+    }
+
+    public static short toShort(byte array[]){
+        if(array.length == 1)return toByte(array);
+        return (short)(array[0] << 8 & 0xff00 |
+                array[1] & 0xff);
+    }
+
+    public static byte toByte(String line){
+        try{
+            return Byte.decode(line);
+        }catch (NumberFormatException ex){
+            return 0;
+        }
+    }
+
+    public static byte toByte(byte array[]){
+        if(array.length == 0)return 0;
+        return (byte)(array[0] & 0xff);
+    }
+
+    public static byte[] toBytes(boolean b){
+        return new byte[]{(byte)(b ? 0x1 : 0x0)};
+    }
+
+    public static byte[] toBytes(long l){
+        if(l >> 32 == l)return toBytes((int)l);
+        return new byte[]{
+                (byte)(l >> 56),
+                (byte)(l >> 48),
+                (byte)(l >> 40),
+                (byte)(l >> 32),
+                (byte)(l >> 24),
+                (byte)(l >> 16),
+                (byte)(l >> 8),
+                (byte)l
+        };
+    }
+
+    public static byte[] toBytes(int i){
+        if(i >> 16 == i)return toBytes((short)i);
+        return new byte[]{
+                (byte)(i >> 24),
+                (byte)(i >> 16),
+                (byte)(i >> 8),
+                (byte)i
+        };
+    }
+
+    public static byte[] toBytes(short s){
+        if(s >> 8 == s)return toBytes((byte) s);
+        return new byte[]{
+                (byte)(s >> 8),
+                (byte)s
+        };
+    }
+
+    public static byte[] toBytes(byte b){
+        return new byte[]{b};
+    }
+
+    public static Map<String, String> toMap(String str){
         if(str == null)return new HashMap<>();
         String split[] = str.split("\n");
         Map<String, String> map = new HashMap<>();
@@ -26,15 +190,7 @@ public class Coder {
         return map;
     }
 
-    public static String eList(List<String> list){
-        if(list == null)return "";
-        StringBuilder buffer = new StringBuilder();
-        for(String line : list)
-            buffer.append(line).append('\n');
-        return buffer.toString();
-    }
-
-    public static List<String> dList(String str){
+    public static List<String> toList(String str){
         if(str == null)return new ArrayList<>();
         String split[] = str.split("\n");
         List<String> list = new ArrayList<>(split.length);

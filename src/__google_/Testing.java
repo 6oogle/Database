@@ -9,6 +9,8 @@ import __google_.net.CSSystem;
 import __google_.net.Client;
 import __google_.net.NetListener;
 import __google_.packet.Packet;
+import __google_.util.ByteUnzip;
+import __google_.util.ByteZip;
 import __google_.util.Listener;
 import __google_.net.Server;
 import __google_.util.Fast;
@@ -126,6 +128,15 @@ public class Testing {
     public static void file(){
         FileIO.write("Lol", "Lol12355");
         System.out.println(FileIO.read("Lol"));
+    }
+
+    public static void bytezip(){
+        ByteZip zip = new ByteZip();
+        zip.add("LolKek").add(123).add(12512552512512L);
+        ByteUnzip unzip = new ByteUnzip(zip.build());
+        System.out.println(unzip.getString());
+        System.out.println(unzip.getInt());
+        System.out.println(unzip.getLong());
     }
 
     private static void defCrypt(Crypt crypt){

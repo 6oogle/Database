@@ -34,6 +34,10 @@ public class Coder {
         return b + "";
     }
 
+    public static String toString(byte array[]){
+        return new String(array);
+    }
+
     public static String toString(Map<String, String> map){
         if(map == null)return "";
         StringBuilder buffer = new StringBuilder();
@@ -144,6 +148,13 @@ public class Coder {
         return (byte)(array[0] & 0xff);
     }
 
+    public static byte[] toBytes(String line){
+        byte result[] = new byte[line.length()];
+        for(int i = 0; i < result.length; i++)
+            result[i] = (byte)line.charAt(i);
+        return result;
+    }
+
     public static byte[] toBytes(boolean b){
         return new byte[]{(byte)(b ? 0x1 : 0x0)};
     }
@@ -182,6 +193,50 @@ public class Coder {
 
     public static byte[] toBytes(byte b){
         return new byte[]{b};
+    }
+
+    public static byte[] addBytes(byte array[], byte add[], int start, byte result[]){
+        System.arraycopy(array, 0, result, start, array.length);
+        System.arraycopy(add, 0, result, start + array.length, add.length);
+        return result;
+    }
+
+    public static byte[] addBytes(byte array[], byte add[], int start){
+        return addBytes(array, add, start, new byte[array.length + add.length]);
+    }
+
+    public static byte[] addBytes(byte array[], byte add[]){
+        return addBytes(array, add, 0);
+    }
+
+    public static byte[] addBytes(byte add[], int start, byte result[]){
+        System.arraycopy(add, 0, result, start, add.length);
+        return result;
+    }
+
+    public static byte[] subBytes(byte array[], int size, int start){
+        byte result[] = new byte[size];
+        System.arraycopy(array, start, result, 0, size);
+        return result;
+    }
+
+    public static byte[] subBytes(byte array[], int size){
+        return subBytes(array, size, 0);
+    }
+
+    public static byte[] getSize(int size){
+        if(size < 127)return new byte[]{(byte)size};
+        return addBytes(new byte[]{(byte)4}, toBytes(size));
+    }
+
+    public static int getSize(byte array[], int start){
+        byte size = array[start];
+        if(size == 127)return toInt(subBytes(array, 4, start + 1));
+        return size;
+    }
+
+    public static int getSize(byte array[]){
+        return getSize(array, 0);
     }
 
     public static Map<String, String> toMap(String str){

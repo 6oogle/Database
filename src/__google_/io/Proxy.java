@@ -15,8 +15,12 @@ public class Proxy extends Thread{
 
     @Override
     public void run(){
-        try{
-            out.write(in.read());
-        }catch (IOException ex){}
+        while (true){
+            try{
+                out.write(in.read());
+            }catch (IOException ex){
+                return;
+            }
+        }
     }
 }

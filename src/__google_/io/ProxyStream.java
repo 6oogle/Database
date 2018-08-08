@@ -21,6 +21,6 @@ public class ProxyStream extends Thread{
             }catch (IOException ex){
                 return;
             }
-        }}
+        }
     }
 }

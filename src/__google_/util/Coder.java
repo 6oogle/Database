@@ -1,5 +1,6 @@
 package __google_.util;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class Coder {
     }
 
     public static String toString(byte array[]){
-        return new String(array);
+        return new String(array, Charset.forName("UTF-8"));
     }
 
     public static String toString(Map<String, String> map){
@@ -149,10 +150,7 @@ public class Coder {
     }
 
     public static byte[] toBytes(String line){
-        byte result[] = new byte[line.length()];
-        for(int i = 0; i < result.length; i++)
-            result[i] = (byte)line.charAt(i);
-        return result;
+        return line.getBytes(Charset.forName("UTF-8"));
     }
 
     public static byte[] toBytes(boolean b){

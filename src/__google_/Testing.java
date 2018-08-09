@@ -11,6 +11,7 @@ import __google_.net.NetListener;
 import __google_.packet.Packet;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
+import __google_.util.Coder;
 import __google_.util.Listener;
 import __google_.net.Server;
 import __google_.util.Fast;
@@ -104,24 +105,26 @@ public class Testing {
     }
 
     public static void packet(){
-        Packet packet = new PacketStr("LolKek");
-        System.out.println(packet);
-        Packet packet1 = Packet.getPacket(packet.toString());
-        System.out.println(packet1);
+        PacketStr packet = new PacketStr("LolKek");
+        System.out.println(packet.str);
+        PacketStr packet1 = (PacketStr)Packet.getPacket(packet.encode());
+        System.out.println(packet1.str);
     }
 
     public static class PacketStr extends Packet {
+        public final String str;
 
-        private final String str;
+        public PacketStr(String line){
+            this.str = line;
+        }
 
-        public PacketStr(String str){
-            super("str");
-            this.str = str;
+        public PacketStr(ByteUnzip line) {
+            this.str = line.getString();
         }
 
         @Override
-        protected String encode() {
-            return str;
+        protected ByteZip encodeByteZip() {
+            return new ByteZip().add(str);
         }
     }
 
@@ -132,7 +135,7 @@ public class Testing {
 
     public static void bytezip(){
         ByteZip zip = new ByteZip();
-        zip.add("LolKek").add(123).add(12512552512512L);
+        zip.add("LolKekддд").add(123).add(12512552512512L);
         ByteUnzip unzip = new ByteUnzip(zip.build());
         System.out.println(unzip.getString());
         System.out.println(unzip.getInt());

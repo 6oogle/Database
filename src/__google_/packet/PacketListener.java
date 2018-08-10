@@ -1,18 +1,16 @@
 package __google_.packet;
 
-import __google_.net.NetListener;
-import __google_.util.Listener;
+import java.util.function.Function;
 
-public class PacketListener implements NetListener{
+public class PacketListener implements Function<byte[], byte[]> {
+    private final Function<Packet, byte[]> listener;
 
-    private final Listener<Packet> listener;
-
-    public PacketListener(Listener<Packet> listener){
+    public PacketListener(Function<Packet, byte[]> listener){
         this.listener = listener;
     }
 
     @Override
-    public void read(String str) {
-        listener.read(Packet.getPacket(str.getBytes()));
+    public byte[] apply(byte[] bytes) {
+        return listener.apply(Packet.getPacket(bytes));
     }
 }

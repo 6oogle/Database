@@ -7,12 +7,9 @@ import __google_.crypt.RSA;
 import __google_.io.FileIO;
 import __google_.net.CSSystem;
 import __google_.net.Client;
-import __google_.net.NetListener;
 import __google_.packet.Packet;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
-import __google_.util.Coder;
-import __google_.util.Listener;
 import __google_.net.Server;
 import __google_.util.Fast;
 
@@ -81,26 +78,11 @@ public class Testing {
     }
 
     public static void net(){
-        Server server = new Server(4000, new NetListener() {
-            private CSSystem system;
-
-            @Override
-            public void read(String str) {
-                system.write(str);
-            }
-
-            @Override
-            public void onConnected(CSSystem system) {
-                this.system = system;
-            }
-        });
-        Client client = new Client("localhost", 4000, (str) -> System.out.println(str));
-        CSSystem system = client.connect();
-        system.write("LolKek");
-        try{
-            Thread.sleep(10);//Give execute time
-        }catch (InterruptedException ex){}
-        system.close();
+        Server.addListener((short)1, () -> {return (b) -> {return b;};});
+        Server server = new Server(4000);
+        Client client = new Client("localhost", 4000);
+        byte result[] = client.connect((short)1, new ByteZip().add("LoLKek").build());
+        System.out.println(new ByteUnzip(result).getString());
         server.close();
     }
 

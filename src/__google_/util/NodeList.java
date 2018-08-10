@@ -1,6 +1,7 @@
 package __google_.util;
 
 import java.util.AbstractList;
+import java.util.Iterator;
 
 public class NodeList<T> extends AbstractList<T>{
 	private Node node = new Node(null);
@@ -25,6 +26,11 @@ public class NodeList<T> extends AbstractList<T>{
 	@Override
 	public int size() {
 		return node.size() - 1;
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return new NodeIterator();
 	}
 
 	private class Node{
@@ -54,6 +60,21 @@ public class NodeList<T> extends AbstractList<T>{
 
 		private int size(){
 			return next == null ? 1 : next.size() + 1;
+		}
+	}
+
+	private class NodeIterator implements Iterator<T>{
+		private Node next = node;
+
+		@Override
+		public boolean hasNext() {
+			return next.next != null;
+		}
+
+		@Override
+		public T next() {
+			next = next.next;
+			return next.object;
 		}
 	}
 }

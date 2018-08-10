@@ -1,13 +1,12 @@
 package __google_.util;
 
 public class ByteZip {
-	private final ByteArrayNodeList list = new ByteArrayNodeList();
+	private final NodeList<byte[]> list = new NodeList<>();
 
 	public byte[] build(){
 		byte result[] = new byte[size()];
 		int write = 0;
-		for(int i = 0; i < list.size(); i++){
-			byte array[] = list.get(i);
+		for(byte array[] : list){
 			byte size[] = Coder.getSize(array.length);
 			result = Coder.addBytes(size, write, result);
 			write = write + size.length;

@@ -35,7 +35,7 @@ public class ByteArrayNodeList {
 		}
 
 		private void add(byte array[]){
-			if(next == null)next = new Node(array);
+			if(next == null) next = new Node(array);
 			else next.add(array);
 		}
 

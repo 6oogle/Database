@@ -1,31 +1,20 @@
 package __google_.net;
 
-import __google_.crypt.Crypt;
-import __google_.util.Listener;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-public class CSSystem extends Thread{
-    private final Socket socket;
-    private final BufferedReader reader;
-    private final BufferedWriter writer;
-    private final Crypt crypt;
-    private final Listener listener;
+public abstract class CSSystem extends Thread{
+    protected final Socket socket;
+    protected final BufferedInputStream in;
+    protected final BufferedOutputStream out;
 
-    public CSSystem(Socket socket, Crypt crypt, NetListener listener) throws IOException{
+    protected CSSystem(Socket socket) throws IOException{
         this.socket = socket;
-        this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        this.crypt = crypt;
-        this.listener = listener;
+        this.in = new BufferedInputStream(socket.getInputStream());
+        this.out = new BufferedOutputStream(socket.getOutputStream());
         setPriority(MIN_PRIORITY);
-        listener.onConnected(this);
-        start();
     }
 
     public void close(){
@@ -35,36 +24,13 @@ public class CSSystem extends Thread{
         }catch (IOException ex){}
     }
 
-    @Override
-    public void run(){
-        try{
-            while (true){
-                String read = reader.readLine();
-                if(read == null)break;//Socket disconnected
-                if(crypt != null)read = crypt.decode(read);
-                listener.read(read);
-            }
-        }catch (IOException ex){
-            //Err socket
-        }catch (IllegalArgumentException ex){
-            //Err decrypt
-        }
-        close();
-    }
-
-    public void write(String str){
-        if(crypt != null)str = crypt.encode(str);
-        try{
-            writer.write(str);
-            writer.newLine();
-            writer.flush();
-        }catch (IOException ex){
-            ex.printStackTrace();
-            close();
-        }
-    }
-
     public boolean connected(){
         return socket != null && socket.isConnected();
+    }
+
+    protected byte[] read(int size) throws IOException{
+        byte array[] = new byte[size];
+        if(in.read(array) == -1)throw new IllegalArgumentException();
+        return array;
     }
 }

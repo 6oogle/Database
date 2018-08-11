@@ -3,17 +3,17 @@ package __google_.net;
 import __google_.crypt.Crypt;
 import __google_.util.ByteUnzip;
 import __google_.util.Coder;
-import __google_.util.Fabric;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public class Server extends Thread{
-    private static Map<Short, Fabric<Function<byte[], byte[]>>> map = new HashMap<>();
+    private static Map<Byte, Executor> map = new HashMap<>();
 
     private final int port;
     private final Crypt crypt;
@@ -46,7 +46,9 @@ public class Server extends Thread{
                 }
             }
         }catch (IOException ex){
-            //Error, server closed, but not close()
+            if(!close)//Closed not with method close()
+                ex.printStackTrace();
+            //Server closed
         }
     }
 
@@ -59,8 +61,8 @@ public class Server extends Thread{
         }
     }
 
-    public static void addListener(short type, Fabric<Function<byte[], byte[]>> listener){
-        map.put(type, listener);
+    public static void addListener(byte type, Executor executor){
+        map.put(type, executor);
     }
 
     private class Listn extends CSSystem{
@@ -72,24 +74,30 @@ public class Server extends Thread{
         @Override
         public void run() {
             try{
-                listn();
-            }catch (Exception ex){
+                Response response = listn();
+                if(response != null){
+                    byte write[] = response.toBytes();
+                    if(crypt != null)write = crypt.encodeByte(write);
+                    out.write(Coder.toBytes(write.length));
+                    out.write(write);
+                    out.flush();
+                }
+            }catch (IllegalArgumentException | SocketTimeoutException ex){
+                //Error can be throw read or decrypt
+            }catch (Throwable ex){
                 ex.printStackTrace();
             }
             close();
         }
 
-        private void listn() throws IOException{
+        private Response listn() throws IOException{
             byte byteSize[] = read(4);
             byte read[] = read(Coder.toInt(byteSize));
             if(crypt != null)read = crypt.decodeByte(read);
-            ByteUnzip unzip = new ByteUnzip(read);
-            byte write[] = map.get(unzip.getShort()).newObject().apply(unzip.getBytes());
-            if(crypt != null)write = crypt.encodeByte(write);
-            out.write(Coder.toBytes(write.length));
-            out.write(write);
-            out.flush();
-            socket.close();
+            Response response = new Response(read);
+            Executor executor = map.get(response.getByteType());
+            if(executor == null)return new Response(ResponseType.NOT_EXECUTORS);
+            return executor.apply(response);
         }
     }
 }

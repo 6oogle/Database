@@ -24,26 +24,24 @@ public class Client {
         this(host, port, null);
     }
 
-    public byte[] connect(short type, byte response[]) {
+    public Response connect(Response response) {
         try{
-            return new Connecter(new Socket(host, port), type, response).result();
+            return new Connecter(new Socket(host, port), response).result();
         }catch (IOException ex){
             return null;
         }
     }
 
     private class Connecter extends CSSystem{
-        private final byte response[];
-        private final short type;
+        private final Response response;
 
-        public Connecter(Socket socket, short type, byte response[]) throws IOException{
+        public Connecter(Socket socket, Response response) throws IOException{
             super(socket);
-            this.type = type;
             this.response = response;
         }
 
-        public byte[] result() throws IOException{
-            byte write[] = new ByteZip().add(type).add(response).build();
+        public Response result() throws IOException{
+            byte write[] = response.toBytes();
             if(crypt != null)write = crypt.encodeByte(write);
             out.write(Coder.toBytes(write.length));
             out.write(write);
@@ -51,7 +49,7 @@ public class Client {
             byte read[] = read(Coder.toInt(read(4)));
             if(crypt != null)read = crypt.decodeByte(read);
             socket.close();
-            return read;
+            return new Response(read);
         }
     }
 }

@@ -7,10 +7,12 @@ import __google_.crypt.RSA;
 import __google_.io.FileIO;
 import __google_.net.CSSystem;
 import __google_.net.Client;
+import __google_.net.Response;
 import __google_.packet.Packet;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
 import __google_.net.Server;
+import __google_.util.Coder;
 import __google_.util.Fast;
 
 import java.util.function.Consumer;
@@ -78,11 +80,13 @@ public class Testing {
     }
 
     public static void net(){
-        Server.addListener((short)1, () -> {return (b) -> {return b;};});
+        Server.addListener((byte)1, (b) -> {return b;});
         Server server = new Server(4000);
         Client client = new Client("localhost", 4000);
-        byte result[] = client.connect((short)1, new ByteZip().add("LoLKek").build());
-        System.out.println(new ByteUnzip(result).getString());
+        Response response = client.connect(new Response((byte)0x01, Coder.toBytes("LolKek")));
+        System.out.println(response.getByteType());
+        System.out.println(response.getType());
+        System.out.println(Coder.toString(response.getContent()));
         server.close();
     }
 

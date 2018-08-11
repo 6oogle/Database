@@ -1,7 +1,9 @@
 package __google_.util;
 
+import java.util.LinkedList;
+
 public class ByteZip {
-	private final NodeList<byte[]> list = new NodeList<>();
+	private final LinkedList<byte[]> list = new LinkedList<>();
 
 	public byte[] build(){
 		byte result[] = new byte[size()];

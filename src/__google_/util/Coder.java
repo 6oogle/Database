@@ -257,4 +257,18 @@ public class Coder {
             list.add(line);
         return list;
     }
+
+    public static String toHex(String line){
+        return toHex(line.getBytes());
+    }
+
+    public static String toHex(byte array[]){
+        StringBuffer buffer = new StringBuffer();
+        for (byte b : array) {
+            String hex = Integer.toHexString(0xff & b);
+            if(hex.length() == 1) buffer.append('0');
+            buffer.append(hex);
+        }
+        return buffer.toString();
+    }
 }

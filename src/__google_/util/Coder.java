@@ -273,8 +273,12 @@ public class Coder {
         return buffer.toString();
     }
 
+    public static String toBase64(byte array[]){
+        return Base64.getEncoder().encodeToString(array);
+    }
+
     public static String toBase64(String line){
-        return Base64.getEncoder().encodeToString(toBytes(line));
+        return toBase64(toBytes(line));
     }
 
     public static String fromBase64(String line){

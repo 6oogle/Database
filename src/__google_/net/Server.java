@@ -36,7 +36,6 @@ public class Server extends Thread{
             listn = new ServerSocket(port);
             while (!close){
                 Socket socket = listn.accept();
-                System.out.println(socket);
                 if(socket != null){
                     try{
                         new Listn(socket);

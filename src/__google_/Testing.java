@@ -3,6 +3,7 @@ package __google_;
 import __google_.crypt.AES;
 import __google_.crypt.Blowfish;
 import __google_.crypt.Crypt;
+import __google_.crypt.Hash;
 import __google_.crypt.RSA;
 import __google_.io.FileIO;
 import __google_.net.CSSystem;
@@ -26,6 +27,13 @@ public class Testing {
             consumer.accept(object);
         end = System.nanoTime();
         return end - start;
+    }
+
+    public static void hash(){
+        String line = "LolKek";
+        System.out.println(line);
+        for(Hash hash : Hash.values())
+            System.out.println(hash.name() + ": " + hash.hash(line));
     }
 
     public static void AES(){

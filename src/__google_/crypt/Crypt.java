@@ -13,24 +13,7 @@ public abstract class Crypt {
 
     public abstract byte[] encodeByte(byte array[]);
 
-    public String encode(String line, boolean useBase64){
-        byte[] result = encodeByte(line.getBytes());
-        return useBase64 ? Base64.getEncoder().encodeToString(result) : new String(result);
-    }
-
-    public String encode(String line){
-        return encode(line, true);
-    }
-
     public abstract byte[] decodeByte(byte array[]);
-
-    public String decode(String line, boolean usedBase64){
-        return new String(decodeByte(usedBase64 ? Base64.getDecoder().decode(line) : line.getBytes()));
-    }
-
-    public String decode(String line){
-        return decode(line, true);
-    }
 
     public String getAlgorithm() {
         return algorithm;

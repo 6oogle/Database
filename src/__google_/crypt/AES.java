@@ -8,9 +8,4 @@ public class AES extends SyncCrypt{
         super("AES");
         this.key = new SecretKeySpec(key.getBytes(), getAlgorithm());
     }
-
-    @Override
-    public Key key() {
-        return key;
-    }
 }

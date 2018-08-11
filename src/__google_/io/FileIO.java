@@ -1,5 +1,7 @@
 package __google_.io;
 
+import __google_.util.Global;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -21,10 +23,9 @@ public class FileIO {
     //Can be set something, for libraries
     public static String prefix = "";
 
-    public static void writeBytes(String strFile, byte[] array){
+    public static void writeBytes(File file, byte array[]){
         BufferedOutputStream out = null;
-        File file = getFile(strFile);
-        if(!file.exists())create(strFile);
+        if(!file.exists())create(file);
         try{
             out = new BufferedOutputStream(new FileOutputStream(file));
             out.write(array);
@@ -32,22 +33,9 @@ public class FileIO {
         close(out);
     }
 
-    public static void write(String strFile, String write){
-        BufferedWriter out = null;
-        File file = getFile(strFile);
-        if(!file.exists())create(strFile);
-        try{
-            out = new BufferedWriter(new FileWriter(file));
-            out.write(write);
-            out.flush();
-        }catch (IOException ex){}
-        close(out);
-    }
-
-    public static byte[] readBytes(String strFile){
-        InputStream in = null;
-        File file = getFile(strFile);
+    public static byte[] readBytes(File file){
         if(!file.exists())return null;
+        InputStream in = null;
         byte array[] = new byte[(int)file.length()];
         try{
             in = new BufferedInputStream(new FileInputStream(file));
@@ -57,9 +45,19 @@ public class FileIO {
         return array;
     }
 
-    public static String read(String strFile){
+    public static void write(File file, String write){
+        BufferedWriter out = null;
+        if(!file.exists())create(file);
+        try{
+            out = new BufferedWriter(new FileWriter(file));
+            out.write(write);
+            out.flush();
+        }catch (IOException ex){}
+        close(out);
+    }
+
+    public static String read(File file){
         BufferedReader reader = null;
-        File file = getFile(strFile);
         if(!file.exists())return null;
         StringBuffer buffer = new StringBuffer((int)file.length());
         try{
@@ -74,28 +72,17 @@ public class FileIO {
         return buffer.toString();
     }
 
-    public static void create(String strFile){
-        File file = getFile(strFile);
+    public static void create(File file){
         try{
             file.getParentFile().mkdirs();
             file.getParentFile().mkdir();
             file.createNewFile();
         }catch (IOException ex){
-            //Ignore
+            if(Global.debug)ex.printStackTrace();
         }
     }
 
-    public static void remove(String strFile){
-        getFile(strFile).delete();
-    }
-
-    public static File[] getFiles(String strFile){
-        File file = getFile(strFile);
-        if(!file.exists() || file.isDirectory())return null;
-        return file.listFiles();
-    }
-
-    private static File getFile(String file){
+    public static File getFile(String file){
         return new File(prefix + file);
     }
 

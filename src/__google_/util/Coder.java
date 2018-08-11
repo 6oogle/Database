@@ -2,6 +2,7 @@ package __google_.util;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -270,5 +271,57 @@ public class Coder {
             buffer.append(hex);
         }
         return buffer.toString();
+    }
+
+    public static String toBase64(String line){
+        return Base64.getEncoder().encodeToString(toBytes(line));
+    }
+
+    public static String fromBase64(String line){
+        return toString(Base64.getDecoder().decode(line));
+    }
+
+    public static String toLowerEN(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 64 && c < 91) c = (char)(c + 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
+
+    public static String toUpperEN(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 96 && c < 123) c = (char)(c - 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
+
+    public static String toLowerRU(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 1071 && c < 1104) c = (char)(c + 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
+
+    public static String toUpperRU(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 1039 && c < 1072) c = (char)(c - 32);
+            result[i] = c;
+        }
+        return new String(result);
     }
 }

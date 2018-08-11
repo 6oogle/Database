@@ -13,45 +13,21 @@ public abstract class AsyncCrypt extends Crypt{
 		super(algorithm);
 	}
 
-	public Key publicKey(){
-		return publicKey;
+	public byte[] getPublicKey(){
+		return publicKey.getEncoded();
 	}
 
-	public byte[] getBytePublicKey(){
-		return publicKey().getEncoded();
-	}
-
-	public String getPublicKey(boolean usingBase64){
-		return usingBase64 ? Base64.getEncoder().encodeToString(getBytePublicKey()) : new String(getBytePublicKey());
-	}
-
-	public String getPublicKey(){
-		return getPublicKey(true);
-	}
-
-	public Key privateKey(){
-		return privateKey;
-	}
-
-	public byte[] getBytePrivateKey(){
-		return publicKey().getEncoded();
-	}
-
-	public String getPrivateKey(boolean usingBase64){
-		return usingBase64 ? Base64.getEncoder().encodeToString(getBytePrivateKey()) : new String(getBytePrivateKey());
-	}
-
-	public String getPrivateKey(){
-		return getPrivateKey(true);
+	public byte[] getPrivateKey(){
+		return publicKey.getEncoded();
 	}
 
 	@Override
 	public byte[] encodeByte(byte array[]) {
-		return cipher(array, Cipher.ENCRYPT_MODE, publicKey());
+		return cipher(array, Cipher.ENCRYPT_MODE, publicKey);
 	}
 
 	@Override
 	public byte[] decodeByte(byte array[]) {
-		return cipher(array, Cipher.DECRYPT_MODE, privateKey());
+		return cipher(array, Cipher.DECRYPT_MODE, privateKey);
 	}
 }

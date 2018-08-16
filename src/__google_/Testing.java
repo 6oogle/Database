@@ -2,6 +2,7 @@ package __google_;
 
 import __google_.crypt.AES;
 import __google_.crypt.Blowfish;
+import __google_.crypt.Certificate;
 import __google_.crypt.Crypt;
 import __google_.crypt.Hash;
 import __google_.crypt.RSA;
@@ -13,7 +14,9 @@ import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
 import __google_.net.Server;
 import __google_.util.Coder;
+import sun.security.rsa.RSAPrivateKeyImpl;
 
+import java.security.spec.X509EncodedKeySpec;
 import java.util.function.Consumer;
 
 public class Testing {
@@ -118,16 +121,6 @@ public class Testing {
         protected ByteZip encodeByteZip() {
             return new ByteZip().add(str);
         }
-    }
-
-    public static void generateCertificate(){
-        RSA rsa = new RSA(1024, false);
-        FileIO.writeBytes("public", rsa.getBytePublicKey());
-        FileIO.writeBytes("private", rsa.getBytePrivateKey());
-        String line = rsa.encode("LolKek");
-        rsa = new RSA(FileIO.readBytes("public"), false);
-        System.out.println(rsa.privateKey());
-        System.out.println(rsa.decode(line));
     }
 
     public static void file(){

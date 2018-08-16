@@ -6,7 +6,6 @@ import __google_.crypt.Crypt;
 import __google_.crypt.Hash;
 import __google_.crypt.RSA;
 import __google_.io.FileIO;
-import __google_.net.CSSystem;
 import __google_.net.Client;
 import __google_.net.Response;
 import __google_.packet.Packet;
@@ -14,7 +13,6 @@ import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
 import __google_.net.Server;
 import __google_.util.Coder;
-import __google_.util.Fast;
 
 import java.util.function.Consumer;
 
@@ -54,8 +52,8 @@ public class Testing {
     public static void fastLowerEN(){
         String lineEN = "aAbBcCdDeEfF123456@@%";
 
-        System.out.println(Fast.toLowerEN(lineEN));
-        System.out.println("Fast -> " + Testing.test((l) -> Fast.toLowerEN(l), lineEN, iterations));
+        System.out.println(Coder.toLowerEN(lineEN));
+        System.out.println("Fast -> " + Testing.test((l) -> Coder.toLowerEN(l), lineEN, iterations));
         System.out.println(lineEN.toLowerCase());
         System.out.println("Default -> " + Testing.test((l) -> l.toLowerCase(), lineEN, iterations));
     }
@@ -63,8 +61,8 @@ public class Testing {
     public static void fastUpperEN(){
         String lineEN = "aAbBcCdDeEfF123456@@%";
 
-        System.out.println(Fast.toUpperEN(lineEN));
-        System.out.println("Fast -> " + Testing.test((l) -> Fast.toUpperEN(l), lineEN, iterations));
+        System.out.println(Coder.toUpperEN(lineEN));
+        System.out.println("Fast -> " + Testing.test((l) -> Coder.toUpperEN(l), lineEN, iterations));
         System.out.println(lineEN.toUpperCase());
         System.out.println("Default -> " + Testing.test((l) -> l.toUpperCase(), lineEN, iterations));
     }
@@ -72,8 +70,8 @@ public class Testing {
     public static void fastLowerRU(){
         String lineRU = "аАбБвВгГдДеЕёЁ123456@@%";
 
-        System.out.println(Fast.toLowerRU(lineRU));
-        System.out.println("Fast -> " + Testing.test((l) -> Fast.toLowerRU(l), lineRU, iterations));
+        System.out.println(Coder.toLowerRU(lineRU));
+        System.out.println("Fast -> " + Testing.test((l) -> Coder.toLowerRU(l), lineRU, iterations));
         System.out.println(lineRU.toLowerCase());
         System.out.println("Default -> " + Testing.test((l) -> l.toLowerCase(), lineRU, iterations));
     }
@@ -81,8 +79,8 @@ public class Testing {
     public static void fastUpperRU(){
         String lineRU = "аАбБвВгГдДеЕёЁ123456@@%";
 
-        System.out.println(Fast.toUpperRU(lineRU));
-        System.out.println("Fast -> " + Testing.test((l) -> Fast.toUpperRU(l), lineRU, iterations));
+        System.out.println(Coder.toUpperRU(lineRU));
+        System.out.println("Fast -> " + Testing.test((l) -> Coder.toUpperRU(l), lineRU, iterations));
         System.out.println(lineRU.toUpperCase());
         System.out.println("Default -> " + Testing.test((l) -> l.toUpperCase(), lineRU, iterations));
     }
@@ -120,6 +118,16 @@ public class Testing {
         protected ByteZip encodeByteZip() {
             return new ByteZip().add(str);
         }
+    }
+
+    public static void generateCertificate(){
+        RSA rsa = new RSA(1024, false);
+        FileIO.writeBytes("public", rsa.getBytePublicKey());
+        FileIO.writeBytes("private", rsa.getBytePrivateKey());
+        String line = rsa.encode("LolKek");
+        rsa = new RSA(FileIO.readBytes("public"), false);
+        System.out.println(rsa.privateKey());
+        System.out.println(rsa.decode(line));
     }
 
     public static void file(){

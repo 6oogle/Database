@@ -77,6 +77,7 @@ public class FileIO {
     public static void create(String strFile){
         File file = getFile(strFile);
         try{
+            System.out.println(file.getParentFile());
             file.getParentFile().mkdirs();
             file.getParentFile().mkdir();
             file.createNewFile();
@@ -96,7 +97,7 @@ public class FileIO {
     }
 
     private static File getFile(String file){
-        return new File(prefix + file);
+        return new File(System.getProperty("user.dir") + prefix + file);
     }
 
     private static void close(InputStream in){

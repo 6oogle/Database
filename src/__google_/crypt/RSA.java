@@ -19,8 +19,8 @@ public class RSA extends AsyncCrypt{
         super("RSA");
         this.privateKeyEncode = privateKeyEncode;
         KeyPair pair = generate(size);
-        publicKey = privateKeyEncode ? pair.getPrivate() : pair.getPublic();
-        privateKey = privateKeyEncode ? pair.getPublic() : pair.getPrivate();
+        publicKey = pair.getPublic();
+        privateKey = pair.getPrivate();
     }
 
     public RSA(int size){
@@ -31,33 +31,43 @@ public class RSA extends AsyncCrypt{
         this(2048);
     }
 
-    public RSA(String publicKey, String privateKey, boolean privateKeyEncode){
+    public RSA(byte publicKey[], byte privateKey[], boolean privateKeyEncode){
         super("RSA");
         this.privateKeyEncode = privateKeyEncode;
         try{
-            if((privateKeyEncode ? privateKey : publicKey) != null)
-                this.publicKey = RSAPublicKeyImpl.parse(new DerValue(privateKeyEncode ? privateKey : publicKey));
             if((privateKeyEncode ? publicKey : privateKey) != null)
-                this.privateKey = RSAPrivateKeyImpl.parse(new DerValue(privateKeyEncode ? publicKey : privateKey));
+                this.publicKey = RSAPublicKeyImpl.parse(new DerValue(privateKeyEncode ? publicKey : privateKey));
+            if((privateKeyEncode ? privateKey : publicKey) != null)
+                this.privateKey = RSAPrivateKeyImpl.parse(new DerValue(privateKeyEncode ? privateKey : publicKey));
         }catch (IOException ex){
             throw new IllegalArgumentException(ex);
         }
     }
 
-    public RSA(String publicKey, boolean privateKeyEncode){
+    public RSA(byte publicKey[], boolean privateKeyEncode){
         this(publicKey, null, privateKeyEncode);
     }
 
-    public RSA(String publicKey){
+    public RSA(byte publicKey[]){
         this(publicKey, true);
     }
 
-    public RSA(boolean privateKeyEncode, String privateKey){
+    public RSA(boolean privateKeyEncode, byte privateKey[]){
         this(null, privateKey, privateKeyEncode);
     }
 
     public boolean isPrivateKeyEncode() {
         return privateKeyEncode;
+    }
+
+    @Override
+    public Key publicKey() {
+        return privateKeyEncode ? publicKey : privateKey;
+    }
+
+    @Override
+    public Key privateKey() {
+        return privateKeyEncode ? privateKey : publicKey;
     }
 
     private KeyPair generate(int size){
@@ -69,5 +79,9 @@ public class RSA extends AsyncCrypt{
             //Unreal exception
             throw new Error(ex);
         }
+    }
+
+    public static RSA getConst(){
+        return null;
     }
 }

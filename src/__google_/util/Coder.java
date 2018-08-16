@@ -271,4 +271,48 @@ public class Coder {
         }
         return buffer.toString();
     }
+
+    public static String toLowerEN(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 64 && c < 91) c = (char)(c + 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
+
+    public static String toUpperEN(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 96 && c < 123) c = (char)(c - 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
+
+    public static String toLowerRU(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 1071 && c < 1104) c = (char)(c + 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
+
+    public static String toUpperRU(String line){
+        char result[] = new char[line.length()];
+        char chars[] = line.toCharArray();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(c > 1039 && c < 1072) c = (char)(c - 32);
+            result[i] = c;
+        }
+        return new String(result);
+    }
 }

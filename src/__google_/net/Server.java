@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class Server extends Thread{
-    private static final Map<Byte, Executor> map = new HashMap<>();
+    private final Map<Byte, Executor> map = new HashMap<>();
 
     private final int port;
     private final Crypt crypt;
@@ -61,7 +61,7 @@ public class Server extends Thread{
         }
     }
 
-    public static void addListener(byte type, Executor executor){
+    public void addListener(byte type, Executor executor){
         map.put(type, executor);
     }
 

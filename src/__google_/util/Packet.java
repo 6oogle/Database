@@ -1,16 +1,12 @@
-package __google_.packet;
-
-import __google_.util.ByteUnzip;
-import __google_.util.ByteZip;
-import __google_.util.Coder;
+package __google_.util;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Packet {
+import static __google_.util.Byteable.getConstructor;
 
+public abstract class Packet implements Byteable{
     private static final Map<String, Constructor<? extends Packet>> packets = new HashMap<>();
     private final String packetType;
 
@@ -24,20 +20,12 @@ public abstract class Packet {
     }
 
     protected byte[] encodeBytes(){
-        ByteZip zip = encodeByteZip();
+        ByteZip zip = toByteZip();
         if(zip != null)return zip.build();
-        return Coder.toBytes(encodeString());
+        return Coder.toBytes(toString());
     }
 
-    protected ByteZip encodeByteZip(){
-        return null;
-    }
-
-    protected String encodeString(){
-        return null;
-    }
-
-    public byte[] encode(){
+    public byte[] toBytes(){
         return new ByteZip().add(getType()).add(encodeBytes()).build();
     }
 
@@ -52,11 +40,7 @@ public abstract class Packet {
         if(arg == byte[].class) invoke = bytes;
         else if(arg == ByteUnzip.class) invoke = new ByteUnzip(bytes);
         else if(arg == String.class) invoke = Coder.toString(bytes);
-        try{
-            return constructor.newInstance(invoke);
-        }catch (IllegalAccessException | InvocationTargetException | InstantiationException ex){
-            throw new IllegalArgumentException(ex);
-        }
+        return Byteable.create(constructor, invoke);
     }
 
     public static void register(Class<? extends Packet> clazz) {
@@ -65,14 +49,6 @@ public abstract class Packet {
         if(constructor == null) constructor = getConstructor(clazz, String.class);
         if(constructor == null) throw new NullPointerException();
         packets.put(getType(clazz), constructor);
-    }
-
-    private static Constructor<? extends Packet> getConstructor(Class<? extends Packet> clazz, Class<?> arg){
-        try{
-            return clazz.getConstructor(arg);
-        }catch (NoSuchMethodException ex){
-            return null;
-        }
     }
 
     private static String getType(Class<? extends Packet> clazz) {

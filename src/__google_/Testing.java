@@ -2,21 +2,18 @@ package __google_;
 
 import __google_.crypt.AES;
 import __google_.crypt.Blowfish;
-import __google_.crypt.Certificate;
 import __google_.crypt.Crypt;
 import __google_.crypt.Hash;
 import __google_.crypt.RSA;
 import __google_.io.FileIO;
 import __google_.net.Client;
 import __google_.net.Response;
-import __google_.packet.Packet;
+import __google_.util.Packet;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
 import __google_.net.Server;
 import __google_.util.Coder;
-import sun.security.rsa.RSAPrivateKeyImpl;
 
-import java.security.spec.X509EncodedKeySpec;
 import java.util.function.Consumer;
 
 public class Testing {
@@ -89,8 +86,8 @@ public class Testing {
     }
 
     public static void net(){
-        Server.addListener((byte)1, (b) -> {return b;});
         Server server = new Server(4000);
+        server.addListener((byte)1, (b) -> {return b;});
         Client client = new Client("localhost", 4000);
         Response response = client.connect(new Response((byte)0x01, Coder.toBytes("LolKek")));
         System.out.println(response.getByteType());
@@ -102,7 +99,7 @@ public class Testing {
     public static void packet(){
         PacketStr packet = new PacketStr("LolKek");
         System.out.println(packet.str);
-        PacketStr packet1 = (PacketStr)Packet.getPacket(packet.encode());
+        PacketStr packet1 = (PacketStr)Packet.getPacket(packet.toBytes());
         System.out.println(packet1.str);
     }
 

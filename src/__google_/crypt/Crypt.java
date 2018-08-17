@@ -2,6 +2,7 @@ package __google_.crypt;
 
 import javax.crypto.Cipher;
 import java.security.Key;
+import java.security.spec.RSAPrivateKeySpec;
 import java.util.Base64;
 
 public abstract class Crypt {
@@ -40,6 +41,7 @@ public abstract class Crypt {
         try{
             Cipher cipher = Cipher.getInstance(getAlgorithm());
             cipher.init(mode, key);
+            RSAPrivateKeySpec
             return cipher.doFinal(array);
         }catch (Exception ex){
             throw new IllegalArgumentException(ex);

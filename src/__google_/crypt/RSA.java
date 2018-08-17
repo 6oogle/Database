@@ -1,7 +1,5 @@
 package __google_.crypt;
 
-import sun.security.rsa.RSAPrivateKeyImpl;
-
 import java.security.KeyPair;
 
 public class RSA extends AsyncCrypt{

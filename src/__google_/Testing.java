@@ -85,6 +85,12 @@ public class Testing {
         System.out.println("Default -> " + Testing.test((l) -> l.toUpperCase(), lineRU, iterations));
     }
 
+    public static void certificate(){
+        RSA rsa = new RSA(512);
+        System.out.println(rsa.privateKey());
+        RSA rs = new RSA(rsa.getBytePublicKey(), rsa.getBytePrivateKey());
+    }
+
     public static void net(){
         Server server = new Server(4000);
         server.addListener((byte)1, (b) -> {return b;});
@@ -115,7 +121,7 @@ public class Testing {
         }
 
         @Override
-        protected ByteZip encodeByteZip() {
+        public ByteZip toByteZip() {
             return new ByteZip().add(str);
         }
     }

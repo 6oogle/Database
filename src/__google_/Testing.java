@@ -97,7 +97,6 @@ public class Testing {
         Client client = new Client("localhost", 4000);
         Response response = client.connect(new Response((byte)0x01, Coder.toBytes("LolKek")));
         System.out.println(response.getByteType());
-        System.out.println(response.getType());
         System.out.println(Coder.toString(response.getContent()));
         server.close();
     }

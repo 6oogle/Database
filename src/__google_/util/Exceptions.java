@@ -12,10 +12,6 @@ public class Exceptions {
 		runThrowsEx(run, true);
 	}
 
-	public interface RunOutException {
-		void run() throws Exception;
-	}
-
 	public static <T> T getThrowsEx(GetOutException<T> get, boolean ignoreEx){
 		try{
 			return get.run();
@@ -27,6 +23,10 @@ public class Exceptions {
 
 	public static <T> T getThrowsEx(GetOutException<T> get){
 		return getThrowsEx(get, true);
+	}
+
+	public interface RunOutException {
+		void run() throws Exception;
 	}
 
 	public interface GetOutException<T>{

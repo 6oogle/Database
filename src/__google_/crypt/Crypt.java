@@ -41,7 +41,6 @@ public abstract class Crypt {
         try{
             Cipher cipher = Cipher.getInstance(getAlgorithm());
             cipher.init(mode, key);
-            RSAPrivateKeySpec
             return cipher.doFinal(array);
         }catch (Exception ex){
             throw new IllegalArgumentException(ex);

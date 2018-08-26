@@ -1,7 +1,13 @@
 package __google_.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.sql.Ref;
+
+import static __google_.util.Reflect.create;
+import static __google_.util.Reflect.getConstructor;
 
 public interface Byteable {
 	default byte[] toBytes(){
@@ -20,31 +26,42 @@ public interface Byteable {
 		return null;
 	}
 
+	static <T> T toObject(byte array[], Class<T> clazz){
+		T obj = Reflect.create(Reflect.getConstructor(clazz));
+		ByteUnzip unzip = new ByteUnzip(array);
+		for(Field field : clazz.getDeclaredFields()){
+			if(!Reflect.isEditable(field))continue;
+			if(!field.isAccessible())field.setAccessible(true);
+			Class klass = field.getType();
+			byte write[] = unzip.getBytes();
+			Object primitive = Coder.getPrimitiveObject(klass, write);
+			if(primitive == null) Reflect.setToField(field, obj, toObject(write, klass));
+			else Reflect.setToField(field, obj, primitive);
+		}
+		return obj;
+	}
+
+	static byte[] toBytes(Object invoke){
+		Class clazz = invoke.getClass();
+		ByteZip zip = new ByteZip();
+		for(Field field : clazz.getDeclaredFields()){
+			if(!Reflect.isEditable(field))continue;
+			if(!field.isAccessible())field.setAccessible(true);
+			Object obj = Reflect.getFromField(field, invoke);
+			if(obj == null)obj = "lolkek";
+			byte add[] = Reflect.getPrimitiveBytes(field, invoke);
+			if(add == null)zip.add(toBytes(obj));
+			else zip.add(add);
+		}
+		return zip.build();
+	}
+
 	static <T extends Byteable> T toByteable(byte array[], Class<T> clazz){
 		Constructor<T> constructor = getConstructor(clazz, byte[].class);
 		if(constructor == null)constructor = getConstructor(clazz, ByteUnzip.class);
-		else return create(constructor, array);
 		if(constructor == null)constructor = getConstructor(clazz, Packet.class);
-		else return create(constructor, new ByteUnzip(array));
 		if(constructor == null)constructor = getConstructor(clazz, String.class);
-		else return create(constructor, Packet.getPacket(array));
 		if(constructor == null) throw new IllegalArgumentException("No such constructor :c");
-		else return create(constructor, Coder.toString(array));
-	}
-
-	static <T extends Byteable> Constructor<T> getConstructor(Class<T> clazz, Class<?> arg){
-		try{
-			return clazz.getConstructor(arg);
-		}catch (NoSuchMethodException ex){
-			return null;
-		}
-	}
-
-	static <T extends Byteable> T create(Constructor<T> constructor, Object arg){
-		try{
-			return constructor.newInstance(arg);
-		}catch (InvocationTargetException | IllegalAccessException | InstantiationException ex){
-			throw new IllegalArgumentException(ex);
-		}
+		return create(constructor, Coder.toString(array));
 	}
 }

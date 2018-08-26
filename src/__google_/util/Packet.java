@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import static __google_.util.Byteable.getConstructor;
+import static __google_.util.Reflect.getConstructor;
 
 public abstract class Packet implements Byteable{
     private static final Map<String, Constructor<? extends Packet>> packets = new HashMap<>();
@@ -40,7 +40,7 @@ public abstract class Packet implements Byteable{
         if(arg == byte[].class) invoke = bytes;
         else if(arg == ByteUnzip.class) invoke = new ByteUnzip(bytes);
         else if(arg == String.class) invoke = Coder.toString(bytes);
-        return Byteable.create(constructor, invoke);
+        return Reflect.create(constructor, invoke);
     }
 
     public static void register(Class<? extends Packet> clazz) {

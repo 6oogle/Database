@@ -193,6 +193,16 @@ public class Coder {
         return new byte[]{b};
     }
 
+    public static Object getPrimitiveObject(Class clazz, byte array[]) {
+        if(clazz == String.class) return Coder.toString(array);
+        if(clazz == boolean.class) return Coder.toBoolean(array);
+        if(clazz == long.class) return Coder.toLong(array);
+        if(clazz == int.class) return Coder.toInt(array);
+        if(clazz == short.class) return Coder.toShort(array);
+        if(clazz == byte.class) return Coder.toByte(array);
+        return null;
+    }
+
     public static byte[] addBytes(byte array[], byte add[], int start, byte result[]){
         System.arraycopy(array, 0, result, start, array.length);
         System.arraycopy(add, 0, result, start + array.length, add.length);

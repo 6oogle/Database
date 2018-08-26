@@ -26,6 +26,15 @@ public interface Byteable {
 		return null;
 	}
 
+	static <T extends Byteable> T toByteable(byte array[], Class<T> clazz){
+		Constructor<T> constructor = getConstructor(clazz, byte[].class);
+		if(constructor == null)constructor = getConstructor(clazz, ByteUnzip.class);
+		if(constructor == null)constructor = getConstructor(clazz, Packet.class);
+		if(constructor == null)constructor = getConstructor(clazz, String.class);
+		if(constructor == null) throw new IllegalArgumentException("No such constructor :c");
+		return create(constructor, Coder.toString(array));
+	}
+
 	static <T> T toObject(byte array[], Class<T> clazz){
 		T obj = Reflect.create(Reflect.getConstructor(clazz));
 		ByteUnzip unzip = new ByteUnzip(array);
@@ -35,8 +44,7 @@ public interface Byteable {
 			Class klass = field.getType();
 			byte write[] = unzip.getBytes();
 			Object primitive = Coder.getPrimitiveObject(klass, write);
-			if(primitive == null) Reflect.setToField(field, obj, toObject(write, klass));
-			else Reflect.setToField(field, obj, primitive);
+			Reflect.setToField(field, obj, primitive == null ? toObject(write, klass) : primitive);
 		}
 		return obj;
 	}
@@ -54,14 +62,5 @@ public interface Byteable {
 			else zip.add(add);
 		}
 		return zip.build();
-	}
-
-	static <T extends Byteable> T toByteable(byte array[], Class<T> clazz){
-		Constructor<T> constructor = getConstructor(clazz, byte[].class);
-		if(constructor == null)constructor = getConstructor(clazz, ByteUnzip.class);
-		if(constructor == null)constructor = getConstructor(clazz, Packet.class);
-		if(constructor == null)constructor = getConstructor(clazz, String.class);
-		if(constructor == null) throw new IllegalArgumentException("No such constructor :c");
-		return create(constructor, Coder.toString(array));
 	}
 }

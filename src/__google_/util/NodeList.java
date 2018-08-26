@@ -73,8 +73,7 @@ public class NodeList<T> extends AbstractList<T>{
 
 		@Override
 		public T next() {
-			next = next.next;
-			return next.object;
+			return (next = next.next).object;
 		}
 	}
 }

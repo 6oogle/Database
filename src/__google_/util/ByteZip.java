@@ -1,7 +1,9 @@
 package __google_.util;
 
+import java.util.List;
+
 public class ByteZip {
-	private final NodeList<byte[]> list = new NodeList<>();
+	private final List<byte[]> list = new NodeList<>();
 
 	public byte[] build(){
 		byte result[] = new byte[size()];
@@ -9,34 +11,14 @@ public class ByteZip {
 		for(byte array[] : list){
 			byte size[] = Coder.getSize(array.length);
 			result = Coder.addBytes(size, write, result);
-			write = write + size.length;
+			write += size.length;
 			result = Coder.addBytes(array, write, result);
-			write = write + array.length;
+			write += array.length;
 		}
 		return result;
 	}
 
-	public ByteZip add(String object){
-		return add(Coder.toBytes(object));
-	}
-
-	public ByteZip add(boolean object){
-		return add(Coder.toBytes(object));
-	}
-
-	public ByteZip add(long object){
-		return add(Coder.toBytes(object));
-	}
-
-	public ByteZip add(int object){
-		return add(Coder.toBytes(object));
-	}
-
-	public ByteZip add(short object){
-		return add(Coder.toBytes(object));
-	}
-
-	public ByteZip add(byte object){
+	public ByteZip add(Object object){
 		return add(Coder.toBytes(object));
 	}
 
@@ -47,12 +29,8 @@ public class ByteZip {
 
 	public int size(){
 		int size = list.size();
-		for(int i = 0; i < list.size(); i++){
-			byte array[] = list.get(i);
-			size = size + array.length;
-			if(array.length > 126)size = size + 4;
-			//Add integer size
-		}
+		for(byte array[] : list)
+			size += array.length + (array.length > 126 ? 4 : 0);
 		return size;
 	}
 }

@@ -2,6 +2,7 @@ package __google_.net;
 
 import __google_.crypt.Crypt;
 import __google_.util.ByteUnzip;
+import __google_.util.Byteable;
 import __google_.util.Coder;
 
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class Server extends Thread{
             try{
                 Response response = listn();
                 if(response != null){
-                    byte write[] = response.toBytes();
+                    byte write[] = Byteable.toBytes(response);
                     if(crypt != null)write = crypt.encodeByte(write);
                     out.write(Coder.toBytes(write.length));
                     out.write(write);
@@ -94,9 +95,9 @@ public class Server extends Thread{
             byte byteSize[] = read(4);
             byte read[] = read(Coder.toInt(byteSize));
             if(crypt != null)read = crypt.decodeByte(read);
-            Response response = new Response(read);
+            Response response = Byteable.toObject(read, Response.class);
             Executor executor = map.get(response.getByteType());
-            if(executor == null)return new Response(ResponseType.NOT_EXECUTORS);
+            if(executor == null)return new Response((byte)-1, new byte[]{});
             return executor.apply(response);
         }
     }

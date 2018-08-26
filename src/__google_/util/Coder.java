@@ -193,6 +193,18 @@ public class Coder {
         return new byte[]{b};
     }
 
+    public static byte[] toBytes(Object object){
+        Class clazz = object.getClass();
+        if(clazz == String.class) return Coder.toBytes(object.toString());
+        if(clazz == boolean.class) return Coder.toBytes((boolean)object);
+        if(clazz == long.class) return Coder.toBytes((long)object);
+        if(clazz == int.class) return Coder.toBytes((int)object);
+        if(clazz == short.class) return Coder.toBytes((short)object);
+        if(clazz == byte.class) return Coder.toBytes((byte)object);
+        if(clazz == byte[].class) return (byte[])object;
+        return Byteable.toBytes(object);
+    }
+
     public static Object getPrimitiveObject(Class clazz, byte array[]) {
         if(clazz == String.class) return Coder.toString(array);
         if(clazz == boolean.class) return Coder.toBoolean(array);
@@ -200,6 +212,7 @@ public class Coder {
         if(clazz == int.class) return Coder.toInt(array);
         if(clazz == short.class) return Coder.toShort(array);
         if(clazz == byte.class) return Coder.toByte(array);
+        if(clazz == byte[].class) return array;
         return null;
     }
 

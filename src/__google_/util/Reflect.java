@@ -25,12 +25,6 @@ public class Reflect {
 		if(object == null)return null;
 		Class clazz = field.getType();
 		return Exceptions.getThrowsEx(() -> {
-			if(clazz == String.class) return Coder.toBytes(field.get(object).toString());
-			if(clazz == boolean.class) return Coder.toBytes(field.getBoolean(object));
-			if(clazz == long.class) return Coder.toBytes(field.getLong(object));
-			if(clazz == int.class) return Coder.toBytes(field.getInt(object));
-			if(clazz == short.class) return Coder.toBytes(field.getShort(object));
-			if(clazz == byte.class) return Coder.toBytes(field.getByte(object));
 			return null;
 		}, false);
 	}

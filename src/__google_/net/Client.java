@@ -3,6 +3,7 @@ package __google_.net;
 import __google_.crypt.Crypt;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
+import __google_.util.Byteable;
 import __google_.util.Coder;
 
 import javax.swing.text.html.CSS;
@@ -41,7 +42,7 @@ public class Client {
         }
 
         public Response result() throws IOException{
-            byte write[] = response.toBytes();
+            byte write[] = Byteable.toBytes(response);
             if(crypt != null)write = crypt.encodeByte(write);
             out.write(Coder.toBytes(write.length));
             out.write(write);
@@ -49,7 +50,7 @@ public class Client {
             byte read[] = read(Coder.toInt(read(4)));
             if(crypt != null)read = crypt.decodeByte(read);
             socket.close();
-            return new Response(read);
+            return Byteable.toObject(read, Response.class);
         }
     }
 }

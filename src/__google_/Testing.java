@@ -93,9 +93,9 @@ public class Testing {
 
     public static void net(){
         Server server = new Server(4000);
-        server.addListener((byte)1, (b) -> {return b;});
+        server.addListener((byte)1, b -> b);
         Client client = new Client("localhost", 4000);
-        Response response = client.connect(new Response((byte)0x01, Coder.toBytes("LolKek")));
+        Response response = client.connect(new Response((byte)1, Coder.toBytes("LolKek")));
         System.out.println(response.getByteType());
         System.out.println(Coder.toString(response.getContent()));
         server.close();
@@ -104,8 +104,7 @@ public class Testing {
     public static void packet(){
         PacketStr packet = new PacketStr("LolKek");
         System.out.println(packet.str);
-        PacketStr packet1 = (PacketStr)Packet.getPacket(packet.toBytes());
-        System.out.println(packet1.str);
+        System.out.println(((PacketStr)Packet.getPacket(packet.toBytes())).str);
     }
 
     public static class PacketStr extends Packet {

@@ -1,30 +1,15 @@
 package __google_.crypt;
 
-import sun.security.pkcs.PKCS8Key;
+import __google_.util.Exceptions;
 import sun.security.rsa.RSAPrivateCrtKeyImpl;
-import sun.security.rsa.RSAPrivateKeyImpl;
-import sun.security.util.DerInputStream;
-import sun.security.util.DerValue;
 
 import javax.crypto.Cipher;
-import javax.crypto.EncryptedPrivateKeyInfo;
-import javax.security.auth.kerberos.KerberosTicket;
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -56,7 +41,7 @@ public abstract class AsyncCrypt extends Crypt{
 	}
 
 	public byte[] getBytePrivateKey(){
-		return publicKey().getEncoded();
+		return privateKey().getEncoded();
 	}
 
 	public String getPrivateKey(boolean usingBase64){
@@ -78,14 +63,11 @@ public abstract class AsyncCrypt extends Crypt{
 	}
 
 	protected KeyPair generate(int size){
-		try{
-			KeyPairGenerator generator = KeyPairGenerator.getInstance(getAlgorithm());
-			generator.initialize(size);
-			return generator.genKeyPair();
-		}catch (NoSuchAlgorithmException ex){
-			//Unreal exception
-			throw new Error(ex);
-		}
+		return Exceptions.getThrowsEx(() -> {
+				KeyPairGenerator generator = KeyPairGenerator.getInstance(getAlgorithm());
+				generator.initialize(size);
+				return generator.genKeyPair();
+		});
 	}
 
 	protected Key decodePublic(byte publicKey[]){
@@ -99,6 +81,7 @@ public abstract class AsyncCrypt extends Crypt{
 	}
 
 	protected Key decodePrivate(byte privateKey[]){
-		throw new UnsupportedOperationException("Sorry, I don't found decoder RSA private key");
+		return Exceptions.getThrowsEx(() -> RSAPrivateCrtKeyImpl.newKey(privateKey), false);
+
 	}
 }

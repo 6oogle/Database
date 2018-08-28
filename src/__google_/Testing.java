@@ -14,6 +14,7 @@ import __google_.util.ByteZip;
 import __google_.net.Server;
 import __google_.util.Coder;
 
+import java.nio.charset.Charset;
 import java.util.function.Consumer;
 
 public class Testing {
@@ -86,9 +87,13 @@ public class Testing {
     }
 
     public static void certificate(){
-        RSA rsa = new RSA(512);
-        System.out.println(rsa.privateKey());
+        RSA rsa = new RSA(1536);
         RSA rs = new RSA(rsa.getBytePublicKey(), rsa.getBytePrivateKey());
+        String line = "LolKasgasgaqwsgawsgzagwsawsggtawqtqwtqwtqwtqwtqwtqwtqwek";
+        System.out.println(rs.encodeByte(line.getBytes(Charset.forName("ASCII"))).length);
+        System.out.println(line.getBytes(Charset.forName("ASCII")).length);
+        System.out.println(rs.encode(line));
+        System.out.println(rsa.decode(rs.encode(line)));
     }
 
     public static void net(){

@@ -1,5 +1,7 @@
 package __google_.crypt;
 
+import __google_.util.Coder;
+
 import javax.crypto.Cipher;
 import java.security.Key;
 import java.security.spec.RSAPrivateKeySpec;

@@ -2,6 +2,8 @@ package __google_.crypt.async;
 
 import __google_.util.Exceptions;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -34,14 +36,14 @@ public class Certificate extends AsyncCrypt{
 		this(2048);
 	}
 
-	public Certificate(byte publicKey[], byte privateKey[]){
+	public Certificate(byte privateKey[], byte publicKey[]){
 		super("RSA");
 		if(publicKey != null)this.publicKey = decodePublic(publicKey);
 		if(privateKey != null)this.privateKey = decodePrivate(privateKey);
 	}
 
 	public Certificate(byte publicKey[]){
-		this(publicKey, null);
+		this(null, publicKey);
 	}
 
 	@Override
@@ -52,5 +54,23 @@ public class Certificate extends AsyncCrypt{
 	@Override
 	public Key privateKey() {
 		return publicKey;
+	}
+
+	private static Certificate constant = null;
+
+	static{
+		try{
+			InputStream in = Certificate.class.getClassLoader().getResourceAsStream("__google_/crypt/async/key.public");
+			byte key[] = new byte[in.available()];
+			in.read(key);
+			in.close();
+			constant = new Certificate(key);
+		}catch (IOException ex){
+			System.err.println("No found constant certificate");
+		}
+	}
+
+	public static Certificate constant(){
+		return constant;
 	}
 }

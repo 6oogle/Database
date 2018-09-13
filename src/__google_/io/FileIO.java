@@ -19,7 +19,7 @@ import java.io.Writer;
 
 public class FileIO {
     //Can be set something, for libraries
-    public static String prefix = "";
+    public static String prefix = "AppData/6oogle/";
 
     public static void writeBytes(String strFile, byte[] array){
         BufferedOutputStream out = null;
@@ -96,8 +96,8 @@ public class FileIO {
         return file.listFiles();
     }
 
-    private static File getFile(String file){
-        return new File(System.getProperty("user.dir") + prefix + file);
+    public static File getFile(String file){
+        return new File(System.getProperty("user.dir") + '/' + prefix + file);
     }
 
     private static void close(InputStream in){

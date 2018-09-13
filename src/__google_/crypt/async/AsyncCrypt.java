@@ -1,6 +1,7 @@
 package __google_.crypt.async;
 
 import __google_.crypt.Crypt;
+import __google_.crypt.hash.SHA_256;
 import __google_.util.Exceptions;
 import sun.security.rsa.RSAPrivateCrtKeyImpl;
 
@@ -37,6 +38,10 @@ public abstract class AsyncCrypt extends Crypt {
 		return getPublicKey(true);
 	}
 
+	public byte[] getHashPublicKey(){
+		return new SHA_256().encodeByte(getBytePublicKey());
+	}
+
 	public Key privateKey(){
 		return privateKey;
 	}
@@ -51,6 +56,10 @@ public abstract class AsyncCrypt extends Crypt {
 
 	public String getPrivateKey(){
 		return getPrivateKey(true);
+	}
+
+	public byte[] getHashPrivateKey(){
+		return new SHA_256().encodeByte(getBytePrivateKey());
 	}
 
 	@Override

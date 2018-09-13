@@ -39,17 +39,18 @@ public class SignedCertificate implements Byteable{
 		}
 	}
 
-	public boolean checkSertificate(){
+	public boolean checkCertificate(){
 		return checkCertificate(Certificate.constant());
 	}
 
 	@Override
 	public ByteZip toByteZip() {
-		return new ByteZip().add(signedHash).add(certificate.privateKey());
+		return new ByteZip().add(signedHash).add(certificate.getBytePrivateKey());
 	}
 
 	public static SignedCertificate sign(Certificate constant, Certificate sign){
 		return Exceptions.getThrowsEx(() -> new SignedCertificate(
-				constant.encodeByte(sign.getHashPrivateKey()), constant));
+				constant.encodeByte(sign.getHashPrivateKey()),
+				new Certificate(sign.getBytePrivateKey())), false);
 	}
 }

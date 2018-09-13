@@ -42,7 +42,7 @@ public class Client {
         }
 
         public Response result() throws IOException{
-            byte write[] = Byteable.toBytes(response);
+            byte write[] = Coder.toBytes(response);
             if(crypt != null)write = crypt.encodeByte(write);
             out.write(Coder.toBytes(write.length));
             out.write(write);
@@ -50,7 +50,7 @@ public class Client {
             byte read[] = read(Coder.toInt(read(4)));
             if(crypt != null)read = crypt.decodeByte(read);
             socket.close();
-            return Byteable.toObject(read, Response.class);
+            return Coder.toObject(read, Response.class);
         }
     }
 }

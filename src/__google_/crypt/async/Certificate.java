@@ -1,15 +1,28 @@
-package __google_.crypt;
+package __google_.crypt.async;
 
-import sun.security.rsa.RSAPrivateKeyImpl;
-import sun.security.rsa.RSAPublicKeyImpl;
-import sun.security.util.DerValue;
+import __google_.util.Exceptions;
 
-import java.io.IOException;
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.cert.X509Certificate;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 
 public class Certificate extends AsyncCrypt{
+	public Certificate(SecureRandom random, int keySize){
+		super("RSA");
+		Exceptions.runThrowsEx(() -> {
+			KeyPairGenerator generator = KeyPairGenerator.getInstance(getAlgorithm());
+			generator.initialize(keySize, random);
+			KeyPair keyPair = generator.genKeyPair();
+			publicKey = keyPair.getPublic();
+			privateKey = keyPair.getPrivate();
+		}, false);
+	}
+
+	public Certificate(SecureRandom random){
+		this(random, 2048);
+	}
+
 	public Certificate(int size){
 		super("RSA");
 		KeyPair pair = generate(size);

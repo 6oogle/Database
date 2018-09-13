@@ -1,14 +1,13 @@
 package __google_;
 
-import __google_.crypt.AES;
-import __google_.crypt.Blowfish;
+import __google_.crypt.sync.AES;
+import __google_.crypt.sync.Blowfish;
 import __google_.crypt.Crypt;
-import __google_.crypt.Hash;
-import __google_.crypt.RSA;
+import __google_.crypt.hash.HashCrypt;
+import __google_.crypt.async.RSA;
 import __google_.io.FileIO;
 import __google_.net.Client;
 import __google_.net.Response;
-import __google_.util.Packet;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
 import __google_.net.Server;
@@ -26,13 +25,6 @@ public class Testing {
             consumer.accept(object);
         end = System.nanoTime();
         return end - start;
-    }
-
-    public static void hash(){
-        String line = "LolKek";
-        System.out.println(line);
-        for(Hash hash : Hash.values())
-            System.out.println(hash.name() + ": " + hash.hash(line));
     }
 
     public static void AES(){
@@ -104,29 +96,6 @@ public class Testing {
         System.out.println(response.getByteType());
         System.out.println(Coder.toString(response.getContent()));
         server.close();
-    }
-
-    public static void packet(){
-        PacketStr packet = new PacketStr("LolKek");
-        System.out.println(packet.str);
-        System.out.println(((PacketStr)Packet.getPacket(packet.toBytes())).str);
-    }
-
-    public static class PacketStr extends Packet {
-        public final String str;
-
-        public PacketStr(String line){
-            this.str = line;
-        }
-
-        public PacketStr(ByteUnzip line) {
-            this.str = line.getString();
-        }
-
-        @Override
-        public ByteZip toByteZip() {
-            return new ByteZip().add(str);
-        }
     }
 
     public static void file(){

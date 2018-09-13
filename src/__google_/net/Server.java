@@ -77,7 +77,7 @@ public class Server extends Thread{
             try{
                 Response response = listn();
                 if(response != null){
-                    byte write[] = Byteable.toBytes(response);
+                    byte write[] = Coder.toBytes(response);
                     if(crypt != null)write = crypt.encodeByte(write);
                     out.write(Coder.toBytes(write.length));
                     out.write(write);
@@ -95,7 +95,7 @@ public class Server extends Thread{
             byte byteSize[] = read(4);
             byte read[] = read(Coder.toInt(byteSize));
             if(crypt != null)read = crypt.decodeByte(read);
-            Response response = Byteable.toObject(read, Response.class);
+            Response response = Coder.toObject(read, Response.class);
             Executor executor = map.get(response.getByteType());
             if(executor == null)return new Response((byte)-1, new byte[]{});
             return executor.apply(response);

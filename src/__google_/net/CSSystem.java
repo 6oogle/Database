@@ -5,7 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public abstract class CSSystem extends Thread{
+abstract class CSSystem extends Thread{
     protected final Socket socket;
     protected final BufferedInputStream in;
     protected final BufferedOutputStream out;

@@ -1,5 +1,6 @@
-package __google_.crypt;
+package __google_.crypt.async;
 
+import __google_.crypt.Crypt;
 import __google_.util.Exceptions;
 import sun.security.rsa.RSAPrivateCrtKeyImpl;
 
@@ -13,7 +14,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-public abstract class AsyncCrypt extends Crypt{
+public abstract class AsyncCrypt extends Crypt {
 	protected Key publicKey, privateKey;
 
 	protected AsyncCrypt(String algorithm) {

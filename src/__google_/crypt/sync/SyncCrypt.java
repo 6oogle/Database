@@ -1,10 +1,12 @@
-package __google_.crypt;
+package __google_.crypt.sync;
+
+import __google_.crypt.Crypt;
 
 import javax.crypto.Cipher;
 import java.security.Key;
 import java.util.Base64;
 
-public abstract class SyncCrypt extends Crypt{
+public abstract class SyncCrypt extends Crypt {
 	protected Key key;
 
 	protected SyncCrypt(String algorithm) {

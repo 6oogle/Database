@@ -4,7 +4,6 @@ import __google_.util.Coder;
 
 import javax.crypto.Cipher;
 import java.security.Key;
-import java.security.spec.RSAPrivateKeySpec;
 import java.util.Base64;
 
 public abstract class Crypt {
@@ -15,6 +14,10 @@ public abstract class Crypt {
     }
 
     public abstract byte[] encodeByte(byte array[]);
+
+    public byte[] encodeByte(String line){
+        return encodeByte(Coder.toBytes(line));
+    }
 
     public String encode(String line, boolean useBase64){
         byte[] result = encodeByte(line.getBytes());

@@ -1,20 +1,14 @@
 package __google_;
 
-import __google_.crypt.async.Certificate;
-import __google_.crypt.async.SignedCertificate;
-import __google_.io.FileIO;
-import __google_.util.Byteable;
+import __google_.crypt.async.RSA;
 
 public class Main{
     public static void main(String[] args){
-        Certificate privateCertificate = new Certificate(FileIO.readBytes("DelfikPro/key.private"), null);
-        SignedCertificate singed = Byteable.toByteable(FileIO.readBytes("DelfikPro/signed.public"), SignedCertificate.class);
-        System.out.println(singed.checkCertificate());
-        String line = "LolKek";
+        String pass = "LolKek";
+        RSA rsa = RSA.generate(pass, 2048, 12);
+        String line = rsa.encode("asffa");
         System.out.println(line);
-        String encoded = privateCertificate.encode(line);
-        System.out.println(encoded);
-        String decoded = singed.getCertificate().decode(encoded);
-        System.out.println(decoded);
+        rsa = RSA.generate(pass, 2048, 12);
+        System.out.println(rsa.decode(line));
     }
 }

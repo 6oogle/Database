@@ -1,12 +1,19 @@
 package __google_.crypt.async;
 
+import __google_.crypt.hash.BCrypt;
+import __google_.crypt.hash.SHA_512;
 import __google_.util.Exceptions;
 
+import javax.crypto.Cipher;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 
 public class RSA extends AsyncCrypt{
+    private boolean certificate = false;
+
     public RSA(SecureRandom random, int keySize){
         super("RSA");
         Exceptions.runThrowsEx(() -> {
@@ -41,5 +48,49 @@ public class RSA extends AsyncCrypt{
 
     public RSA(byte publicKey[]){
         this(publicKey, null);
+    }
+
+    @Override
+    public byte[] encodeByte(byte[] array) {
+        return cipher(array, Cipher.ENCRYPT_MODE, certificate ? publicKey() : privateKey());
+    }
+
+    @Override
+    public byte[] decodeByte(byte[] array) {
+        return cipher(array, Cipher.DECRYPT_MODE, certificate ? privateKey() : publicKey());
+    }
+
+    public void setCertificate(boolean certificate){
+        this.certificate = certificate;
+    }
+
+    public boolean isCertificate(){
+        return certificate;
+    }
+
+    public static RSA generate(String password, int keySize, int rounds){
+        BCrypt hash = new BCrypt();
+        SHA_512 sha = new SHA_512();
+        SecureRandom random = new SecureRandom(sha.encodeByte(password));
+        byte salt[] = hash.generateSalt(rounds, random);
+        return new RSA(new SecureRandom(hash.encodeByte(password, salt)), keySize);
+    }
+
+    private static RSA constant = null;
+
+    static{
+        try{
+            InputStream in = RSA.class.getClassLoader().getResourceAsStream("__google_/crypt/async/key.public");
+            byte key[] = new byte[in.available()];
+            in.read(key);
+            in.close();
+            constant = new RSA(key);
+        }catch (IOException ex){
+            System.err.println("No found constant certificate");
+        }
+    }
+
+    public static RSA constant(){
+        return constant;
     }
 }

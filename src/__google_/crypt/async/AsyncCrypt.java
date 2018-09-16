@@ -30,14 +30,6 @@ public abstract class AsyncCrypt extends Crypt {
 		return publicKey().getEncoded();
 	}
 
-	public String getPublicKey(boolean usingBase64){
-		return usingBase64 ? Base64.getEncoder().encodeToString(getBytePublicKey()) : new String(getBytePublicKey());
-	}
-
-	public String getPublicKey(){
-		return getPublicKey(true);
-	}
-
 	public byte[] getHashPublicKey(){
 		return new SHA_256().encodeByte(getBytePublicKey());
 	}
@@ -48,14 +40,6 @@ public abstract class AsyncCrypt extends Crypt {
 
 	public byte[] getBytePrivateKey(){
 		return privateKey().getEncoded();
-	}
-
-	public String getPrivateKey(boolean usingBase64){
-		return usingBase64 ? Base64.getEncoder().encodeToString(getBytePrivateKey()) : new String(getBytePrivateKey());
-	}
-
-	public String getPrivateKey(){
-		return getPrivateKey(true);
 	}
 
 	public byte[] getHashPrivateKey(){

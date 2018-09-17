@@ -63,7 +63,11 @@ public class Coder {
     }
 
     public static boolean toBoolean(byte array[]){
-        return array.length != 0 && array[0] == 0x1;
+        return array.length != 0 && toBoolean(array[0]);
+    }
+
+    public static boolean toBoolean(byte bool){
+        return bool == 0x1;
     }
 
     public static double toDouble(String line){
@@ -134,8 +138,7 @@ public class Coder {
 
     public static short toShort(byte array[]){
         if(array.length != 2)return toByte(array);
-        return (short)(array[0] << 8 & 0xff00 |
-                array[1] & 0xff);
+        return (short)(array[0] << 8 & 0xff00 | array[1] & 0xff);
     }
 
     public static byte toByte(String line){
@@ -147,11 +150,16 @@ public class Coder {
         }
     }
 
-    public static byte toByte(byte array[]){
-        if(array.length != 1)return 0;
-        return (byte)(array[0] & 0xff);
+    public static byte toByte(byte array[]) {
+        if(array.length != 1) return 0;
+        return (byte) (array[0] & 0xff);
     }
 
+    public static byte toByte(boolean bool){
+        return (byte)(bool ? 0x1 : 0x0);
+    }
+
+    @SuppressWarnings("unchecked")
     public static <T> T toObject(byte array[], Class<T> clazz){
         if(isPrimitive(clazz))return (T)toPrimitive(clazz, array);
         if(isEnum(clazz))return (T)toEnum(clazz, array);
@@ -172,11 +180,11 @@ public class Coder {
         if(invoke instanceof List)return toBytes((List<String>)invoke);
         Class clazz = invoke.getClass();
         if(clazz == String.class) return toBytes(invoke.toString());
-        if(clazz == boolean.class) return toBytes((boolean)invoke);
-        if(clazz == long.class) return toBytes((long)invoke);
-        if(clazz == int.class) return toBytes((int)invoke);
-        if(clazz == short.class) return toBytes((short)invoke);
-        if(clazz == byte.class) return toBytes((byte)invoke);
+        if(clazz == Boolean.class) return toBytes((boolean)invoke);
+        if(clazz == Long.class) return toBytes((long)invoke);
+        if(clazz == Integer.class) return toBytes((int)invoke);
+        if(clazz == Short.class) return toBytes((short)invoke);
+        if(clazz == Byte.class) return toBytes((byte)invoke);
         if(clazz == byte[].class) return (byte[])invoke;
         if(isEnum(clazz))return Coder.toBytes(Reflect.getEnumName(invoke));
         ByteZip zip = new ByteZip();
@@ -204,7 +212,7 @@ public class Coder {
     }
 
     public static byte[] toBytes(boolean b){
-        return new byte[]{(byte)(b ? 0x1 : 0x0)};
+        return new byte[]{toByte(b)};
     }
 
     public static byte[] toBytes(long l){

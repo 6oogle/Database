@@ -52,12 +52,12 @@ public class RSA extends AsyncCrypt{
 
     @Override
     public byte[] encodeByte(byte[] array) {
-        return cipher(array, Cipher.ENCRYPT_MODE, certificate ? publicKey() : privateKey());
+        return cipher(array, Cipher.ENCRYPT_MODE, certificate ? privateKey() : publicKey());
     }
 
     @Override
     public byte[] decodeByte(byte[] array) {
-        return cipher(array, Cipher.DECRYPT_MODE, certificate ? privateKey() : publicKey());
+        return cipher(array, Cipher.DECRYPT_MODE, certificate ? publicKey() : privateKey());
     }
 
     public void setCertificate(boolean certificate){

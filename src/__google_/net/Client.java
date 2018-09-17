@@ -1,6 +1,8 @@
 package __google_.net;
 
 import __google_.crypt.Crypt;
+import __google_.crypt.async.RSA;
+import __google_.crypt.async.SignedRSA;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
 import __google_.util.Byteable;
@@ -13,7 +15,7 @@ import java.net.Socket;
 public class Client {
     private final String host;
     private final int port;
-    private final Crypt crypt;
+    private Crypt crypt;
 
     public Client(String host, int port, Crypt crypt){
         this.host = host;
@@ -25,32 +27,46 @@ public class Client {
         this(host, port, null);
     }
 
-    public Response connect(Response response) {
+    public Response connect(Response response, Flags flags) {
         try{
-            return new Connecter(new Socket(host, port), response).result();
+            return new Connecter(new Socket(host, port), response, flags, crypt).result();
         }catch (IOException ex){
             return null;
         }
     }
 
-    private class Connecter extends CSSystem{
-        private final Response response;
+    public Response connect(Response response){
+        return connect(response, new Flags());
+    }
 
-        public Connecter(Socket socket, Response response) throws IOException{
-            super(socket);
-            this.response = response;
+    public Response connect(int type, byte content[]){
+        return connect(new Response(type, content));
+    }
+
+    public boolean getCertificate(boolean always){
+        if(crypt != null)throw new IllegalArgumentException(":/");
+        Response response = connect(new Response(0), new Flags(false));
+        if(response.getType() == 127)return false;
+        SignedRSA rsa = Byteable.toByteable(response.getContent(), SignedRSA.class);
+        if(!always && !rsa.checkCertificate())return false;
+        crypt = rsa.getRSA();
+        return true;
+    }
+
+    public boolean getCertificate(){
+        return getCertificate(false);
+    }
+
+    private class Connecter extends CSSystem{
+        private Connecter(Socket socket, Response response, Flags flags, Crypt crypt) throws IOException{
+            super(socket, response, flags, crypt);
         }
 
-        public Response result() throws IOException{
-            byte write[] = Coder.toBytes(response);
-            if(crypt != null)write = crypt.encodeByte(write);
-            out.write(Coder.toBytes(write.length));
-            out.write(write);
-            out.flush();
-            byte read[] = read(Coder.toInt(read(4)));
-            if(crypt != null)read = crypt.decodeByte(read);
+        private Response result() throws IOException{
+            write();
+            Response response = read();
             socket.close();
-            return Coder.toObject(read, Response.class);
+            return response;
         }
     }
 }

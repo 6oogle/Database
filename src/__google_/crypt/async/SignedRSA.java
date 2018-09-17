@@ -17,7 +17,8 @@ public class SignedRSA implements Byteable{
 	}
 
 	public SignedRSA(ByteUnzip unzip){
-		signedHash = unzip.getBytes();
+		byte array[] = unzip.getBytes();
+		signedHash = array.length == 0 ? null : array;
 		rsa = new RSA(unzip.getBytes());
 	}
 
@@ -30,6 +31,7 @@ public class SignedRSA implements Byteable{
 	}
 
 	public boolean checkCertificate(RSA rsa){
+		if(signedHash == null)return false;
 		boolean last = rsa.isCertificate();
 		rsa.setCertificate(true);
 		try{
@@ -49,7 +51,8 @@ public class SignedRSA implements Byteable{
 
 	@Override
 	public ByteZip toByteZip() {
-		return new ByteZip().add(signedHash).add(rsa.getBytePublicKey());
+		return new ByteZip().add(signedHash == null ? new byte[]{} :
+				signedHash).add(rsa.getBytePublicKey());
 	}
 
 	public static SignedRSA sign(RSA constant, RSA sign){

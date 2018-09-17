@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-public class BCrypt extends HashCrypt{
+public class BCrypt extends Hasher {
 	public BCrypt() {
 		super("BCrypt");
 	}

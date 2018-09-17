@@ -1,9 +1,11 @@
 package __google_.net;
 
 import __google_.crypt.Crypt;
-import __google_.util.ByteUnzip;
-import __google_.util.Byteable;
+import __google_.crypt.async.SignedRSA;
+import __google_.net.exec.Exec;
+import __google_.net.exec.ExecRSA;
 import __google_.util.Coder;
+import __google_.util.Exceptions;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,13 +13,12 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class Server extends Thread{
-    private final Map<Byte, Executor> map = new HashMap<>();
+    private final Map<Byte, Exec> map = new HashMap<>();
 
     private final int port;
-    private final Crypt crypt;
+    private Crypt crypt;
     private ServerSocket listn;
     private boolean close = false;
 
@@ -37,13 +38,12 @@ public class Server extends Thread{
             listn = new ServerSocket(port);
             while (!close){
                 Socket socket = listn.accept();
-                if(socket != null){
-                    try{
-                        new Listn(socket);
-                    }catch (IOException ex){
-                        //Client not connected
-                        ex.printStackTrace();
-                    }
+                if(socket == null) continue;
+                try{
+                    new Listn(socket, crypt);
+                }catch (IOException ex){
+                    //Client not connected
+                    ex.printStackTrace();
                 }
             }
         }catch (IOException ex){
@@ -55,50 +55,53 @@ public class Server extends Thread{
 
     public void close(){
         close = true;
-        try{
-            listn.close();
-        }catch (IOException ex){
-            //Close listn port
-        }
+        Exceptions.runThrowsEx(() -> listn.close());
     }
 
-    public void addListener(byte type, Executor executor){
-        map.put(type, executor);
+    public void addListener(byte type, Exec exec){
+        map.put(type, exec);
+    }
+
+    public void addListener(int type, Exec exec){
+        addListener((byte)type, exec);
+    }
+
+    public void setCertificate(SignedRSA certificate){
+        addListener(0, new ExecRSA(certificate));
+        this.crypt = certificate.getRSA();
     }
 
     private class Listn extends CSSystem{
-        public Listn(Socket socket) throws IOException{
-            super(socket);
+        public Listn(Socket socket, Crypt crypt) throws IOException{
+            super(socket, crypt);
             start();
         }
 
         @Override
         public void run() {
             try{
-                Response response = listn();
-                if(response != null){
-                    byte write[] = Coder.toBytes(response);
-                    if(crypt != null)write = crypt.encodeByte(write);
-                    out.write(Coder.toBytes(write.length));
-                    out.write(write);
-                    out.flush();
-                }
+                this.response = exec();
+                write();
             }catch (IllegalArgumentException | SocketTimeoutException ex){
                 //Error can be throw read or decrypt
-            }catch (Throwable ex){
+            }catch (Exception ex){
                 ex.printStackTrace();
             }
             close();
         }
 
-        private Response listn() throws IOException{
-            byte byteSize[] = read(4);
-            byte read[] = read(Coder.toInt(byteSize));
-            if(crypt != null)read = crypt.decodeByte(read);
-            Response response = Coder.toObject(read, Response.class);
-            Executor executor = map.get(response.getByteType());
-            if(executor == null)return new Response((byte)-1, new byte[]{});
-            return executor.apply(response);
+        private Response exec() throws IOException {
+            Response response = read();
+            if(response == null) return nullResponce();
+            Exec exec = map.get(response.getType());
+            if(exec == null) return nullResponce();
+            response = exec.apply(response);
+            if(response == null)return nullResponce();
+            return response;
+        }
+
+        private Response nullResponce(){
+            return new Response(127);
         }
     }
 }

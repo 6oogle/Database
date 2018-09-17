@@ -1,17 +1,28 @@
 package __google_.net;
 
-public class Response {
-	private byte byteType, content[];
+import __google_.util.Byteable;
 
-	public Response(byte byteType, byte content[]){
-		this.byteType = byteType;
+public class Response implements Byteable{
+	private byte type, content[];
+
+	public Response(byte type, byte content[]){
+		this.type = type;
 		this.content = content;
 	}
 
-	public Response(){}
+	public Response(int type, byte content[]){
+		this((byte)type, content);
+	}
 
-	public byte getByteType() {
-		return byteType;
+	public Response(int type){
+		this(type, new byte[]{});
+	}
+
+	public Response(){
+	}
+
+	public byte getType() {
+		return type;
 	}
 
 	public byte[] getContent() {

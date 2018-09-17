@@ -9,8 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-public abstract class HashCrypt extends Crypt{
-	public HashCrypt(String algorithm) {
+public abstract class Hasher extends Crypt{
+	public Hasher(String algorithm) {
 		super(algorithm);
 	}
 

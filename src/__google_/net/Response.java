@@ -7,7 +7,7 @@ public class Response implements Byteable{
 
 	public Response(byte type, byte content[]){
 		this.type = type;
-		this.content = content;
+		this.content = content == null ? new byte[]{} : content;
 	}
 
 	public Response(int type, byte content[]){

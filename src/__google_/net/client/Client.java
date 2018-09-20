@@ -1,26 +1,30 @@
-package __google_.net;
+package __google_.net.client;
 
 import __google_.crypt.Crypt;
-import __google_.crypt.async.RSA;
 import __google_.crypt.async.SignedRSA;
-import __google_.util.ByteUnzip;
-import __google_.util.ByteZip;
+import __google_.net.CSSystem;
+import __google_.net.Flags;
+import __google_.net.Response;
 import __google_.util.Byteable;
-import __google_.util.Coder;
 
-import javax.swing.text.html.CSS;
 import java.io.IOException;
 import java.net.Socket;
 
 public class Client {
     private final String host;
     private final int port;
+    private final NetClientCreator worker;
     private Crypt crypt;
 
-    public Client(String host, int port, Crypt crypt){
+    public Client(String host, int port, Crypt crypt, NetClientCreator worker){
         this.host = host;
         this.port = port;
+        this.worker = worker;
         this.crypt = crypt;
+    }
+
+    public Client(String host, int port, Crypt crypt){
+        this(host, port, crypt, Connector::new);
     }
 
     public Client(String host, int port){
@@ -29,7 +33,7 @@ public class Client {
 
     public Response connect(Response response, Flags flags) {
         try{
-            return new Connecter(new Socket(host, port), response, flags, crypt).result();
+            return worker.create(new Socket(host, port), response, flags, crypt).apply();
         }catch (IOException ex){
             return null;
         }
@@ -55,18 +59,5 @@ public class Client {
 
     public boolean getCertificate(){
         return getCertificate(false);
-    }
-
-    private class Connecter extends CSSystem{
-        private Connecter(Socket socket, Response response, Flags flags, Crypt crypt) throws IOException{
-            super(socket, response, flags, crypt);
-        }
-
-        private Response result() throws IOException{
-            write();
-            Response response = read();
-            socket.close();
-            return response;
-        }
     }
 }

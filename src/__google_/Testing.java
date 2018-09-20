@@ -6,11 +6,12 @@ import __google_.crypt.sync.Blowfish;
 import __google_.crypt.Crypt;
 import __google_.crypt.async.RSA;
 import __google_.io.FileIO;
-import __google_.net.Client;
+import __google_.net.client.Client;
 import __google_.net.Response;
+import __google_.net.server.NetServer;
 import __google_.util.ByteUnzip;
 import __google_.util.ByteZip;
-import __google_.net.Server;
+import __google_.net.server.Server;
 import __google_.util.Coder;
 
 import java.nio.charset.Charset;
@@ -90,10 +91,8 @@ public class Testing {
 
     public static void net(){
         Server server = new Server(4000);
-        server.addListener(1, b -> b);
-        server.setCertificate(new SignedRSA(null, new RSA(512)));
+        server.addExec(1, NetServer::write);
         Client client = new Client("localhost", 4000);
-        client.getCertificate(true);
         Response response = client.connect(1, Coder.toBytes("LolKek"));
         System.out.println(response.getType());
         System.out.println(Coder.toString(response.getContent()));

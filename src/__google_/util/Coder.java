@@ -229,7 +229,7 @@ public class Coder {
         };
     }
 
-    private static byte[] toAbsoluteBytes(int i){
+    public static byte[] toAbsoluteBytes(int i){
         return new byte[]{
                 (byte)(i >> 24),
                 (byte)(i >> 16),
@@ -256,6 +256,7 @@ public class Coder {
     }
 
     public static byte[] addBytes(byte array[], byte add[], int start, byte result[]){
+        if(array.length != 0)
         System.arraycopy(array, 0, result, start, array.length);
         System.arraycopy(add, 0, result, start + array.length, add.length);
         return result;

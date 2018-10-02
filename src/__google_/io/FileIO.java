@@ -19,7 +19,7 @@ import java.io.Writer;
 
 public class FileIO {
     //Can be set something, for libraries
-    public static String prefix = "AppData/6oogle/";
+    public static String prefix = "AppData/";
 
     public static void writeBytes(String strFile, byte[] array){
         BufferedOutputStream out = null;
@@ -77,7 +77,6 @@ public class FileIO {
     public static void create(String strFile){
         File file = getFile(strFile);
         try{
-            System.out.println(file.getParentFile());
             file.getParentFile().mkdirs();
             file.getParentFile().mkdir();
             file.createNewFile();

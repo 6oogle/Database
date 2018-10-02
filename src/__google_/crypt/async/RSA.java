@@ -78,18 +78,6 @@ public class RSA extends AsyncCrypt{
 
     private static RSA constant = null;
 
-    static{
-        try{
-            InputStream in = RSA.class.getClassLoader().getResourceAsStream("__google_/crypt/async/key.public");
-            byte key[] = new byte[in.available()];
-            in.read(key);
-            in.close();
-            constant = new RSA(key);
-        }catch (IOException ex){
-            System.err.println("No found constant certificate");
-        }
-    }
-
     public static RSA constant(){
         return constant;
     }

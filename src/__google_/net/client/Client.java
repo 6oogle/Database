@@ -35,6 +35,7 @@ public class Client {
         try{
             return worker.create(new Socket(host, port), response, flags, crypt).apply();
         }catch (IOException ex){
+            ex.printStackTrace();
             return null;
         }
     }

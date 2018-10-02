@@ -2,6 +2,7 @@ package __google_.net;
 
 import __google_.crypt.Crypt;
 import __google_.util.Coder;
+import __google_.util.Exceptions;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -13,7 +14,7 @@ public abstract class CSSystem implements NetWorker{
     private Flags flags;
     private final Crypt crypt;
 
-    final Socket socket;
+    private final Socket socket;
     private final BufferedInputStream in;
     private final BufferedOutputStream out;
 
@@ -24,6 +25,7 @@ public abstract class CSSystem implements NetWorker{
         this.response = response;
         this.flags = flags;
         this.crypt = crypt;
+        socket.setSoTimeout(1000);
     }
 
     protected CSSystem(Socket socket, Crypt crypt) throws IOException{
@@ -33,17 +35,17 @@ public abstract class CSSystem implements NetWorker{
     @Override
     public void close(){
         if(socket == null)return;
-        try{
+        Exceptions.runThrowsEx(() -> {
             flush();
             socket.close();
-        }catch (IOException ex){}
+        });
     }
 
     @Override
     public void write() throws IOException{
         byte write[] = Coder.toBytes(response);
         if(flags.isCrypt() && crypt != null)write = crypt.encodeByte(write);
-        write(Coder.toBytes(write.length));
+        write(Coder.toAbsoluteBytes(write.length));
         write(flags.getFlags());
         write(write);
         flush();
@@ -60,21 +62,22 @@ public abstract class CSSystem implements NetWorker{
         setResponse(Coder.toObject(read, Response.class));
     }
 
-    protected byte[] read(int size) throws IOException{
+    private byte[] read(int size) throws IOException{
         byte array[] = new byte[size];
-        if(in.read(array) == -1)throw new IllegalArgumentException();
+        for(int i = 0; i < array.length; i++)
+            array[i] = (byte)in.read();
         return array;
     }
 
-    protected void write(byte array[]) throws IOException{
+    private void write(byte array[]) throws IOException{
         out.write(array);
     }
 
-    protected void write(byte b) throws IOException{
+    private void write(byte b) throws IOException{
         out.write(b);
     }
 
-    protected void flush() throws IOException{
+    private void flush() throws IOException{
         out.flush();
     }
 

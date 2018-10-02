@@ -8,7 +8,7 @@ import java.io.IOException;
 public interface NetServer extends NetWorker, Runnable{
 	@Override
 	default void run(){
-		Exceptions.runThrowsEx(this::execute);
+		Exceptions.runThrowsEx(this::execute, false);
 		closeOutException();
 	}
 

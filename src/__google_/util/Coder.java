@@ -1,9 +1,7 @@
 package __google_.util;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -395,7 +393,10 @@ public class Coder {
     }
 
     public static Object toPrimitive(Class clazz, byte array[]) {
-        if(clazz == String.class) return Coder.toString(array);
+        if(clazz == String.class) {
+            String result = Coder.toString(array);
+            return result.equals("null") ? null : result;
+        }
         if(clazz == boolean.class) return Coder.toBoolean(array);
         if(clazz == long.class) return Coder.toLong(array);
         if(clazz == int.class) return Coder.toInt(array);

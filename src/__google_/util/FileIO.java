@@ -1,88 +1,66 @@
-package __google_.io;
+package __google_.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Flushable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 
 public class FileIO {
     //Can be set something, for libraries
     public static String prefix = "AppData/";
 
     public static void writeBytes(String strFile, byte[] array){
-        BufferedOutputStream out = null;
         File file = getFile(strFile);
         if(!file.exists())create(strFile);
-        try{
-            out = new BufferedOutputStream(new FileOutputStream(file));
+        close(Exceptions.getThrowsEx(() -> {
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
             out.write(array);
-        }catch (IOException ex){}
-        close(out);
+            return out;
+        }));
     }
 
     public static void write(String strFile, String write){
-        BufferedWriter out = null;
         File file = getFile(strFile);
         if(!file.exists())create(strFile);
-        try{
-            out = new BufferedWriter(new FileWriter(file));
+        close(Exceptions.getThrowsEx(() -> {
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
             out.write(write);
-            out.flush();
-        }catch (IOException ex){}
-        close(out);
+            return out;
+        }));
     }
 
     public static byte[] readBytes(String strFile){
-        InputStream in = null;
         File file = getFile(strFile);
         if(!file.exists())return null;
         byte array[] = new byte[(int)file.length()];
-        try{
-            in = new BufferedInputStream(new FileInputStream(file));
-            in.read(array);
-        }catch (IOException ex){}
-        close(in);
+        close(Exceptions.getThrowsEx(() -> {
+            InputStream stream = new BufferedInputStream(new FileInputStream(file));
+            stream.read(array);
+            return stream;
+        }));
         return array;
     }
 
     public static String read(String strFile){
-        BufferedReader reader = null;
         File file = getFile(strFile);
         if(!file.exists())return null;
-        StringBuffer buffer = new StringBuffer((int)file.length());
-        try{
-            reader = new BufferedReader(new FileReader(file));
+        StringBuilder buffer = new StringBuilder((int)file.length());
+        close(Exceptions.getThrowsEx(() -> {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             while (true){
                 int i = reader.read();
                 if(i == -1)break;
                 buffer.append((char)i);
             }
-        }catch (IOException ex){}
-        close(reader);
+            return reader;
+        }));
         return buffer.toString();
     }
 
     public static void create(String strFile){
         File file = getFile(strFile);
-        try{
+        Exceptions.runThrowsEx(() -> {
             file.getParentFile().mkdirs();
             file.getParentFile().mkdir();
             file.createNewFile();
-        }catch (IOException ex){
-            //Ignore
-        }
+        });
     }
 
     public static void remove(String strFile){
@@ -101,39 +79,27 @@ public class FileIO {
 
     private static void close(InputStream in){
         if(in == null)return;
-        try{
-            in.close();
-        }catch (IOException ex){
-            //Close
-        }
+        Exceptions.runThrowsEx(in::close);
     }
 
     private static void close(Reader in){
         if(in == null)return;
-        try{
-            in.close();
-        }catch (IOException ex){
-            //Close
-        }
+        Exceptions.runThrowsEx(in::close);
     }
 
     private static void close(OutputStream out){
         if(out == null)return;
-        try{
+        Exceptions.runThrowsEx(() -> {
             out.flush();
             out.close();
-        }catch (IOException ex){
-            //Close
-        }
+        });
     }
 
     private static void close(Writer out){
         if(out == null)return;
-        try{
+        Exceptions.runThrowsEx(() -> {
             out.flush();
             out.close();
-        }catch (IOException ex){
-            //Close
-        }
+        });
     }
 }

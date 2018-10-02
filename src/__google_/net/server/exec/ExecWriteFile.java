@@ -1,12 +1,9 @@
 package __google_.net.server.exec;
 
-import __google_.io.FileIO;
+import __google_.util.FileIO;
 import __google_.net.Response;
 import __google_.net.server.NetServer;
 import __google_.util.ByteUnzip;
-import __google_.util.Coder;
-
-import java.io.IOException;
 
 public class ExecWriteFile implements Exec{
 	@Override

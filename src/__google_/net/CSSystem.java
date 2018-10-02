@@ -64,8 +64,11 @@ public abstract class CSSystem implements NetWorker{
 
     private byte[] read(int size) throws IOException{
         byte array[] = new byte[size];
-        for(int i = 0; i < array.length; i++)
-            array[i] = (byte)in.read();
+        for(int i = 0; i < array.length; i++) {
+            int local = in.read();
+            if(local == -1)throw new IOException("Can't read");
+            array[i] = (byte) local;
+        }
         return array;
     }
 

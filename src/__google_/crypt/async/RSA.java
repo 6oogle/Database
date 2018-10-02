@@ -1,6 +1,7 @@
 package __google_.crypt.async;
 
 import __google_.crypt.hash.BCrypt;
+import __google_.crypt.hash.Hasher;
 import __google_.crypt.hash.SHA_512;
 import __google_.util.Exceptions;
 
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
+import java.util.Random;
 
 public class RSA extends AsyncCrypt{
     private boolean certificate = false;
@@ -69,8 +71,8 @@ public class RSA extends AsyncCrypt{
     }
 
     public static RSA generate(String password, int keySize, int rounds){
-        BCrypt hash = new BCrypt();
-        SHA_512 sha = new SHA_512();
+        Hasher hash = new BCrypt();
+        Hasher sha = new SHA_512();
         SecureRandom random = new SecureRandom(sha.encodeByte(password));
         byte salt[] = hash.generateSalt(rounds, random);
         return new RSA(new SecureRandom(hash.encodeByte(password, salt)), keySize);

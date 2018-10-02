@@ -5,6 +5,7 @@ import __google_.util.Coder;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Random;
 
 public class BCrypt extends Hasher {
 	public BCrypt() {

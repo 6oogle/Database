@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Random;
 
 public abstract class Hasher extends Crypt{
 	public Hasher(String algorithm) {
@@ -44,7 +45,7 @@ public abstract class Hasher extends Crypt{
 	}
 
 	public byte[] generateSalt(int rounds){
-		return generateSalt(rounds, new SecureRandom(new byte[]{0}));
+		return generateSalt(rounds, new SecureRandom(new byte[]{}));
 	}
 
 	public byte[] generateSalt(){
@@ -58,6 +59,6 @@ public abstract class Hasher extends Crypt{
 
 	@Override
 	public final byte[] decodeByte(byte array[]) {
-		throw new UnsupportedOperationException("This class only encrypt");
+		throw new UnsupportedOperationException("This class support only encrypt");
 	}
 }

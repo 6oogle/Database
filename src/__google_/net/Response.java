@@ -18,8 +18,7 @@ public class Response implements Byteable{
 		this(type, new byte[]{});
 	}
 
-	public Response(){
-	}
+	public Response(){}
 
 	public byte getType() {
 		return type;

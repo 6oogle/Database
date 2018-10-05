@@ -11,18 +11,22 @@ import java.net.Socket;
 
 public class Listener extends CSSystem implements NetServer{
 	private final Server server;
+	private Crypt crypt;
 
 	public Listener(Socket socket, Crypt crypt, Server server) throws IOException {
-		super(socket, crypt);
+		super(socket);
 		this.server = server;
+		this.crypt = crypt;
 		new Thread(this).start();
 	}
 
 	@Override
 	public void execute() throws IOException {
-		read();
-		setResponse(getResponse());
-		write();
+		while (true) {
+			read();
+			setResponse(getResponse());
+			write();
+		}
 	}
 
 	private Response getResponse(){
@@ -30,11 +34,21 @@ public class Listener extends CSSystem implements NetServer{
 		if(response == null) return nullResponse();
 		Exec exec = server.getExec(response.getType());
 		if(exec == null) return nullResponse();
-		Exceptions.runThrowsEx(() -> exec.accept(this));
+		Exceptions.runThrowsEx(() -> exec.accept(this), false);
 		return response();
 	}
 
 	private Response nullResponse(){
 		return new Response(127);
+	}
+
+	@Override
+	public Crypt crypt() {
+		return crypt;
+	}
+
+	@Override
+	public void setCrypt(Crypt crypt) {
+		this.crypt = crypt;
 	}
 }

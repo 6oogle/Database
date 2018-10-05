@@ -1,5 +1,6 @@
 package __google_.net;
 
+import __google_.crypt.Crypt;
 import __google_.util.Exceptions;
 
 import java.io.IOException;
@@ -29,4 +30,10 @@ public interface NetWorker {
 	Flags flags();
 
 	void setFlags(Flags flags);
+
+	boolean connected();
+
+	Crypt crypt();
+
+	void setCrypt(Crypt crypt);
 }

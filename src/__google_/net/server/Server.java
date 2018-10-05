@@ -1,8 +1,11 @@
 package __google_.net.server;
 
 import __google_.crypt.Crypt;
+import __google_.crypt.async.RSA;
 import __google_.crypt.async.SignedRSA;
 import __google_.net.server.exec.Exec;
+import __google_.net.server.exec.ExecAES;
+import __google_.net.server.exec.ExecRSA;
 import __google_.util.Exceptions;
 
 import java.io.IOException;
@@ -67,5 +70,11 @@ public class Server extends Thread{
 
     public Exec getExec(int type){
         return map.get((byte)type);
+    }
+
+    public void setCertificate(SignedRSA signed, RSA rsa){
+        addExec(126, new ExecRSA(signed));
+        addExec(125, new ExecAES());
+        crypt = rsa;
     }
 }

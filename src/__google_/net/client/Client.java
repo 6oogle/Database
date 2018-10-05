@@ -2,15 +2,17 @@ package __google_.net.client;
 
 import __google_.crypt.Crypt;
 import __google_.crypt.async.SignedRSA;
-import __google_.net.CSSystem;
+import __google_.crypt.sync.AES;
 import __google_.net.Flags;
 import __google_.net.Response;
 import __google_.util.Byteable;
+import __google_.util.Exceptions;
 
-import java.io.IOException;
 import java.net.Socket;
 
 public class Client {
+    private NetClient instance;
+
     private final String host;
     private final int port;
     private final NetClientCreator worker;
@@ -31,34 +33,45 @@ public class Client {
         this(host, port, null);
     }
 
-    public Response connect(Response response, Flags flags) {
-        try{
-            return worker.create(new Socket(host, port), response, flags, crypt).apply();
-        }catch (IOException ex){
-            ex.printStackTrace();
-            return null;
-        }
+    public void close(){
+        if(instance != null)instance.closeOutException();
     }
 
-    public Response connect(Response response){
-        return connect(response, new Flags());
+    public void connect() {
+        instance = Exceptions.getThrowsEx(() -> worker.create(new Socket(host, port), this), false);
     }
 
-    public Response connect(int type, byte content[]){
-        return connect(new Response(type, content));
+    public synchronized Response apply(Response response, Flags flags){
+        if(!connected())connect();
+        return Exceptions.getThrowsEx(() -> instance.apply(response, flags), false);
     }
 
-    public boolean getCertificate(boolean always){
-        if(crypt != null)throw new IllegalArgumentException(":/");
-        Response response = connect(new Response(0), new Flags(false));
-        if(response.getType() == 127)return false;
-        SignedRSA rsa = Byteable.toByteable(response.getContent(), SignedRSA.class);
-        if(!always && !rsa.checkCertificate())return false;
-        crypt = rsa.getRSA();
-        return true;
+    public Response apply(Response response){
+        return apply(response, new Flags());
     }
 
-    public boolean getCertificate(){
-        return getCertificate(false);
+    public void getCertificate(boolean always){
+        Response key = apply(new Response(126), new Flags(false));
+        SignedRSA signed = Byteable.toByteable(key.getContent(), SignedRSA.class);
+        if(!always && !signed.checkCertificate() && !signed.existsHost(host))throw new IllegalArgumentException("Certificate not secure");
+        AES local = new AES(32);
+        apply(new Response(125, signed.getRSA().encodeByte(local.getByteKey())), new Flags(false));
+        crypt = local;
+    }
+
+    public void getCertificate(){
+        getCertificate(false);
+    }
+
+    public boolean connected(){
+        return instance != null && instance.connected();
+    }
+
+    public Crypt getCrypt() {
+        return crypt;
+    }
+
+    public void setCrypt(Crypt crypt){
+        this.crypt = crypt;
     }
 }

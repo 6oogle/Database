@@ -6,12 +6,9 @@ import __google_.crypt.hash.SHA_512;
 import __google_.util.Exceptions;
 
 import javax.crypto.Cipher;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
-import java.util.Random;
 
 public class RSA extends AsyncCrypt{
     private boolean certificate = false;
@@ -76,11 +73,5 @@ public class RSA extends AsyncCrypt{
         SecureRandom random = new SecureRandom(sha.encodeByte(password));
         byte salt[] = hash.generateSalt(rounds, random);
         return new RSA(new SecureRandom(hash.encodeByte(password, salt)), keySize);
-    }
-
-    private static RSA constant = null;
-
-    public static RSA constant(){
-        return constant;
     }
 }

@@ -11,7 +11,7 @@ public class Reflect {
 	}
 
 	public static <T> T create(Constructor<T> constructor, Object... args) {
-		return Exceptions.getThrowsEx(() -> constructor.newInstance(args));
+		return Exceptions.getThrowsEx(() -> constructor.newInstance(args), false);
 	}
 
 	public static Object getFromField(Field field, Object invoke) {

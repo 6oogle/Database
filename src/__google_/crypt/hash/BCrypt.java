@@ -5,11 +5,15 @@ import __google_.util.Coder;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.Random;
 
 public class BCrypt extends Hasher {
 	public BCrypt() {
 		super("BCrypt");
+	}
+
+	public static byte[] encode(byte bytes[], int rounds){
+		BCrypt crypt = new BCrypt();
+		return crypt.encodeByte(bytes, crypt.generateSalt(rounds, new SecureRandom(new SHA_256().encodeByte(bytes))));
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package __google_.net;
 
-import __google_.crypt.Crypt;
 import __google_.util.Coder;
 import __google_.util.Exceptions;
 
@@ -8,43 +7,33 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public abstract class CSSystem implements NetWorker{
-    private Response response;
-    private Flags flags;
-    private final Crypt crypt;
+    private Response response = null;
+    private Flags flags = new Flags();
 
     private final Socket socket;
     private final BufferedInputStream in;
     private final BufferedOutputStream out;
 
-    protected CSSystem(Socket socket, Response response, Flags flags, Crypt crypt) throws IOException{
+    protected CSSystem(Socket socket) throws IOException{
         this.socket = socket;
         this.in = new BufferedInputStream(socket.getInputStream());
         this.out = new BufferedOutputStream(socket.getOutputStream());
-        this.response = response;
-        this.flags = flags;
-        this.crypt = crypt;
         socket.setSoTimeout(1000);
-    }
-
-    protected CSSystem(Socket socket, Crypt crypt) throws IOException{
-        this(socket, null, null, crypt);
     }
 
     @Override
     public void close(){
         if(socket == null)return;
-        Exceptions.runThrowsEx(() -> {
-            flush();
-            socket.close();
-        });
+        Exceptions.runThrowsEx(socket::close);
     }
 
     @Override
     public void write() throws IOException{
         byte write[] = Coder.toBytes(response);
-        if(flags.isCrypt() && crypt != null)write = crypt.encodeByte(write);
+        if(flags.isCrypt() && crypt() != null)write = crypt().encodeByte(write);
         write(Coder.toAbsoluteBytes(write.length));
         write(flags.getFlags());
         write(write);
@@ -58,18 +47,22 @@ public abstract class CSSystem implements NetWorker{
         Flags flags = new Flags(input[4]);
         setFlags(flags);
         byte read[] = read(size);
-        if(flags.isCrypt() && crypt != null)read = crypt.decodeByte(read);
+        if(flags.isCrypt() && crypt() != null)read = crypt().decodeByte(read);
         setResponse(Coder.toObject(read, Response.class));
     }
 
     private byte[] read(int size) throws IOException{
-        byte array[] = new byte[size];
-        for(int i = 0; i < array.length; i++) {
-            int local = in.read();
-            if(local == -1)throw new IOException("Can't read");
-            array[i] = (byte) local;
+        while (true) {
+            try {
+                byte array[] = new byte[size];
+                for (int i = 0; i < array.length; i++) {
+                    int local = in.read();
+                    if (local == -1) throw new IOException("Can't read");
+                    array[i] = (byte) local;
+                }
+                return array;
+            }catch (SocketTimeoutException ex){}
         }
-        return array;
     }
 
     private void write(byte array[]) throws IOException{
@@ -107,5 +100,10 @@ public abstract class CSSystem implements NetWorker{
     @Override
     public void setFlags(Flags flags) {
         this.flags = flags;
+    }
+
+    @Override
+    public boolean connected() {
+        return socket != null && socket.isConnected();
     }
 }

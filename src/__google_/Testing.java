@@ -97,6 +97,7 @@ public class Testing {
         Response response = client.apply(new Response(1, Coder.toBytes("LolKek")), new Flags(false));
         System.out.println(response.getType());
         System.out.println(Coder.toString(response.getContent()));
+        System.out.println(client.connected());
         response = client.apply(new Response(1, Coder.toBytes("LolKek123")));
         System.out.println(response.getType());
         System.out.println(Coder.toString(response.getContent()));

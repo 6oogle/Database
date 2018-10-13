@@ -5,6 +5,7 @@ import __google_.util.Exceptions;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.function.Consumer;
 
 public interface NetWorker {
 
@@ -40,4 +41,6 @@ public interface NetWorker {
 	boolean onlyEncrypt();
 
 	void onlyEncrypt(boolean onlyEncrypt);
+
+	void postWrite(Consumer<NetWorker> consumer);
 }

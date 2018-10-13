@@ -8,21 +8,27 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.function.Consumer;
 
 public abstract class CSSystem implements NetWorker{
     private Response response = null;
     private Flags flags = new Flags();
     private boolean onlyEncrypted = false;
+    private Consumer<NetWorker> postWrite = null;
 
     private final Socket socket;
     private final BufferedInputStream in;
     private final BufferedOutputStream out;
 
+    @Override
+    public void postWrite(Consumer<NetWorker> postWrite) {
+        this.postWrite = postWrite;
+    }
+
     protected CSSystem(Socket socket) throws IOException{
         this.socket = socket;
         this.in = new BufferedInputStream(socket.getInputStream());
         this.out = new BufferedOutputStream(socket.getOutputStream());
-        socket.setSoTimeout(1000);
     }
 
     @Override
@@ -39,6 +45,9 @@ public abstract class CSSystem implements NetWorker{
         write(flags.getFlags());
         write(write);
         flush();
+        if(postWrite == null)return;
+        postWrite.accept(this);
+        postWrite = null;
     }
 
     @Override

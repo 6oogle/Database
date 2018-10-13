@@ -5,7 +5,6 @@ import __google_.crypt.hash.SHA_256;
 import __google_.util.Coder;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
 import java.security.SecureRandom;
 
 public class AES extends SyncCrypt{
@@ -21,16 +20,10 @@ public class AES extends SyncCrypt{
     }
 
     public AES(byte key[]){
-        super("AES");
-        this.key = new SecretKeySpec(key, getAlgorithm());
+        super("AES", key);
     }
 
     public AES(String key){
         this(new SHA_256().encodeByte(BCrypt.encode(Coder.toBytes(key), 12)));
-    }
-
-    @Override
-    public Key key() {
-        return key;
     }
 }

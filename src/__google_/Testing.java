@@ -9,10 +9,7 @@ import __google_.net.Flags;
 import __google_.net.Response;
 import __google_.net.client.Client;
 import __google_.net.server.Server;
-import __google_.util.ByteUnzip;
-import __google_.util.ByteZip;
-import __google_.util.Coder;
-import __google_.util.FileIO;
+import __google_.util.*;
 
 import java.nio.charset.Charset;
 import java.util.function.Consumer;
@@ -91,11 +88,12 @@ public class Testing {
 
     public static void net(){
         Server server = new Server(4000);
-        RSA rsa = new RSA(512);
-        server.setCertificate(new SignedRSA(null, rsa, new String[]{"localhost"}), rsa);
+        server.setCertificate(Byteable.toByteable(FileIO.readBytes("lmaomc/signed.certificate"), SignedRSA.class),
+                Byteable.toByteable(FileIO.readBytes("lmaomc/rsa.key"), RSA.class));
         server.addExec(1, netServer -> {});
         Client client = new Client("localhost", 4000);
-        client.getCertificate(true);
+        client.connect();
+        client.getCertificate();
         Response response = client.apply(new Response(1, Coder.toBytes("LolKek")), new Flags(false));
         System.out.println(response.getType());
         System.out.println(Coder.toString(response.getContent()));

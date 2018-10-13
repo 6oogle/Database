@@ -42,7 +42,6 @@ public class Client {
     }
 
     public synchronized Response apply(Response response, Flags flags){
-        if(!connected())connect();
         return Exceptions.getThrowsEx(() -> instance.apply(response, flags), false);
     }
 
@@ -57,6 +56,7 @@ public class Client {
         AES local = new AES(32);
         apply(new Response(125, signed.getRSA().encodeByte(local.getByteKey())), new Flags(false));
         crypt = local;
+        instance.onlyEncrypt(true);
     }
 
     public void getCertificate(){

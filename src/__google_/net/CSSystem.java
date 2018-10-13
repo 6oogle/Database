@@ -12,6 +12,7 @@ import java.net.SocketTimeoutException;
 public abstract class CSSystem implements NetWorker{
     private Response response = null;
     private Flags flags = new Flags();
+    private boolean onlyEncrypted = false;
 
     private final Socket socket;
     private final BufferedInputStream in;
@@ -33,7 +34,7 @@ public abstract class CSSystem implements NetWorker{
     @Override
     public void write() throws IOException{
         byte write[] = Coder.toBytes(response);
-        if(flags.isCrypt() && crypt() != null)write = crypt().encodeByte(write);
+        if(onlyEncrypted || (flags.isCrypt() && crypt() != null))write = crypt().encodeByte(write);
         write(Coder.toAbsoluteBytes(write.length));
         write(flags.getFlags());
         write(write);
@@ -47,7 +48,7 @@ public abstract class CSSystem implements NetWorker{
         Flags flags = new Flags(input[4]);
         setFlags(flags);
         byte read[] = read(size);
-        if(flags.isCrypt() && crypt() != null)read = crypt().decodeByte(read);
+        if(onlyEncrypted || (flags.isCrypt() && crypt() != null))read = crypt().decodeByte(read);
         setResponse(Coder.toObject(read, Response.class));
     }
 
@@ -105,5 +106,15 @@ public abstract class CSSystem implements NetWorker{
     @Override
     public boolean connected() {
         return socket != null && socket.isConnected();
+    }
+
+    @Override
+    public void onlyEncrypt(boolean onlyEncrypt){
+        onlyEncrypted = onlyEncrypt;
+    }
+
+    @Override
+    public boolean onlyEncrypt() {
+        return onlyEncrypted;
     }
 }

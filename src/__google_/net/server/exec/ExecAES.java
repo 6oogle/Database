@@ -7,7 +7,8 @@ import __google_.net.server.NetServer;
 public class ExecAES implements Exec{
     @Override
     public void accept(NetServer server) {
-        if(!(server.crypt() instanceof RSA))return;
+        if(!(server.crypt() instanceof RSA) || !server.flags().isCrypt())return;
         server.setCrypt(new AES(server.crypt().decodeByte(server.response().getContent())));
+        server.onlyEncrypt(true);
     }
 }

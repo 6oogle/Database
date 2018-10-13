@@ -1,10 +1,13 @@
 package __google_.crypt.sync;
 
-import javax.crypto.spec.SecretKeySpec;
+import __google_.util.Coder;
 
 public class Blowfish extends SyncCrypt{
+    public Blowfish(byte key[]){
+        super("Blowfish", key);
+    }
+
     public Blowfish(String key){
-        super("Blowfish");
-        this.key = new SecretKeySpec(key.getBytes(), getAlgorithm());
+        this(Coder.toBytes(key));
     }
 }

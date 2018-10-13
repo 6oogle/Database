@@ -5,12 +5,10 @@ import __google_.util.Exceptions;
 
 import java.io.IOException;
 
-public interface NetServer extends NetWorker, Runnable{
-	@Override
-	default void run(){
-		Exceptions.runThrowsEx(this::execute);
-		closeOutException();
-	}
+public interface NetServer extends Runnable, NetWorker {
+    default void run() {
+        Exceptions.runThrowsEx(this::execute);
+    }
 
-	void execute() throws IOException;
+    void execute() throws IOException;
 }

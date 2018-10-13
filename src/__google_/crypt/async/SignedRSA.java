@@ -10,11 +10,17 @@ public class SignedRSA implements Byteable{
 	private final byte signedHash[];
 	private final String hosts[];
 	private final RSA rsa;
+	private final long end;
 
-	public SignedRSA(byte signedHash[], RSA rsa, String hosts[]){
+	public SignedRSA(byte signedHash[], RSA rsa, String hosts[], long end){
 		this.signedHash = signedHash;
 		this.rsa = rsa;
 		this.hosts = hosts;
+		this.end = end;
+	}
+
+	public SignedRSA(byte signedHash[], RSA rsa, String hosts[]){
+		this(signedHash, rsa, hosts, System.currentTimeMillis() + (2419200000L));
 	}
 
 	public SignedRSA(byte signedHash[], RSA rsa){
@@ -25,11 +31,16 @@ public class SignedRSA implements Byteable{
 		byte array[] = unzip.getBytes();
 		signedHash = array.length == 0 ? null : array;
 		rsa = new RSA(unzip.getBytes());
+		end = unzip.getLong();
 		int size = unzip.getInt();
 		String strHosts[] = new String[size];
 		for(int i = 0; i < size; i++)
 			strHosts[i] = unzip.getString();
 		this.hosts = strHosts;
+	}
+
+	public long getEnd() {
+		return end;
 	}
 
 	public byte[] getSignedHash() {
@@ -55,8 +66,9 @@ public class SignedRSA implements Byteable{
 		boolean last = rsa.isCertificate();
 		rsa.setCertificate(true);
 		try{
+			if(end > System.currentTimeMillis())return false;
 			byte decoded[] = rsa.decodeByte(signedHash);
-			return Arrays.equals(createHash(this.rsa, hosts), decoded);
+			return Arrays.equals(createHash(this.rsa, hosts, end), decoded);
 		}catch (IllegalArgumentException ex){
 			return false;
 		}finally{
@@ -71,16 +83,16 @@ public class SignedRSA implements Byteable{
 	@Override
 	public ByteZip toByteZip() {
 		ByteZip zip = new ByteZip().add(signedHash == null ? new byte[]{} :
-				signedHash).add(rsa.getBytePublicKey()).add(hosts.length);
+				signedHash).add(rsa.getBytePublicKey()).add(end).add(hosts.length);
 		for(String host : hosts)
 			zip.add(host);
 		return zip;
 	}
 
-	public static SignedRSA sign(RSA constant, RSA sign, String hosts[]){
+	public static SignedRSA sign(RSA constant, RSA sign, String hosts[], long end){
 		return Exceptions.getThrowsEx(() -> new SignedRSA(
-				constant.encodeByte(createHash(sign, hosts)),
-				new RSA(sign.getBytePublicKey()), hosts), false);
+				constant.encodeByte(createHash(sign, hosts, end)),
+				new RSA(sign.getBytePublicKey()), hosts, end), false);
 	}
 
 	private static RSA constant = null;
@@ -98,7 +110,7 @@ public class SignedRSA implements Byteable{
 		});
 	}
 
-	private static byte[] createHash(RSA rsa, String hosts[]){
-		return Coder.addBytes(rsa.getHashPublicKey(), new SHA_256().encodeByte(String.join("", hosts)));
+	private static byte[] createHash(RSA rsa, String hosts[], long end){
+		return Coder.addBytes(Coder.addBytes(rsa.getHashPublicKey(), Coder.toBytes(end)), new SHA_256().encodeByte(String.join("", hosts)));
 	}
 }

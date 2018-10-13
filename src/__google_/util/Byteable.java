@@ -14,10 +14,10 @@ public interface Byteable {
 	}
 
 	static <T extends Byteable> T toByteable(byte array[], Class<T> clazz){
-		Constructor<T> constructor = Reflect.getConstructor(clazz, byte[].class);
-		if(constructor != null)return Reflect.create(constructor, array);
-		constructor = Reflect.getConstructor(clazz, ByteUnzip.class);
+		Constructor<T> constructor = Reflect.getConstructor(clazz, ByteUnzip.class);
 		if(constructor != null)return Reflect.create(constructor, new ByteUnzip(array));
+		constructor = Reflect.getConstructor(clazz, byte[].class);
+		if(constructor != null)return Reflect.create(constructor, array);
 		throw new IllegalArgumentException("No such constructor :c");
 	}
 }

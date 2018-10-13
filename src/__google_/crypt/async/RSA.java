@@ -3,6 +3,9 @@ package __google_.crypt.async;
 import __google_.crypt.hash.BCrypt;
 import __google_.crypt.hash.Hasher;
 import __google_.crypt.hash.SHA_512;
+import __google_.util.ByteUnzip;
+import __google_.util.ByteZip;
+import __google_.util.Byteable;
 import __google_.util.Exceptions;
 
 import javax.crypto.Cipher;
@@ -10,8 +13,12 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 
-public class RSA extends AsyncCrypt{
+public class RSA extends AsyncCrypt implements Byteable {
     private boolean certificate = false;
+
+    public RSA(ByteUnzip unzip){
+        this(unzip.getBytes(), unzip.getBytes());
+    }
 
     public RSA(SecureRandom random, int keySize){
         super("RSA");
@@ -41,8 +48,8 @@ public class RSA extends AsyncCrypt{
 
     public RSA(byte publicKey[], byte privateKey[]){
         super("RSA");
-        if(publicKey != null)this.publicKey = decodePublic(publicKey);
-        if(privateKey != null)this.privateKey = decodePrivate(privateKey);
+        if(publicKey != null && publicKey.length != 0)this.publicKey = decodePublic(publicKey);
+        if(privateKey != null && privateKey.length != 0)this.privateKey = decodePrivate(privateKey);
     }
 
     public RSA(byte publicKey[]){
@@ -65,6 +72,13 @@ public class RSA extends AsyncCrypt{
 
     public boolean isCertificate(){
         return certificate;
+    }
+
+    @Override
+    public ByteZip toByteZip() {
+        return new ByteZip()
+                .add(publicKey() != null ? getBytePublicKey() : new byte[]{})
+                .add(privateKey() != null ? getBytePrivateKey() : new byte[]{});
     }
 
     public static RSA generate(String password, int keySize, int rounds){

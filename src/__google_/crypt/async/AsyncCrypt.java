@@ -10,10 +10,7 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 
 public abstract class AsyncCrypt extends Crypt {
 	protected Key publicKey, privateKey;
@@ -65,17 +62,14 @@ public abstract class AsyncCrypt extends Crypt {
 	}
 
 	protected Key decodePublic(byte publicKey[]){
-		try{
+		return Exceptions.getThrowsEx(() -> {
 			X509EncodedKeySpec key = new X509EncodedKeySpec(publicKey);
 			KeyFactory factory = KeyFactory.getInstance(getAlgorithm());
 			return factory.generatePublic(key);
-		}catch (NoSuchAlgorithmException | InvalidKeySpecException ex){
-			throw new IllegalArgumentException(ex);
-		}
+		});
 	}
 
 	protected Key decodePrivate(byte privateKey[]){
 		return Exceptions.getThrowsEx(() -> RSAPrivateCrtKeyImpl.newKey(privateKey), false);
-
 	}
 }

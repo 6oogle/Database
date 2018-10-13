@@ -36,4 +36,8 @@ public interface NetWorker {
 	Crypt crypt();
 
 	void setCrypt(Crypt crypt);
+
+	boolean onlyEncrypt();
+
+	void onlyEncrypt(boolean onlyEncrypt);
 }

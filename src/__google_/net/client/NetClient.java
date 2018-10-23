@@ -14,4 +14,10 @@ public interface NetClient extends NetWorker {
 		read();
 		return response();
 	}
+
+	default void post(Response response, Flags flags) throws IOException {
+		setFlags(flags);
+		setResponse(response);
+		write();
+	}
 }

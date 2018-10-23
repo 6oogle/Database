@@ -29,6 +29,7 @@ public abstract class CSSystem implements NetWorker{
         this.socket = socket;
         this.in = new BufferedInputStream(socket.getInputStream());
         this.out = new BufferedOutputStream(socket.getOutputStream());
+        socket.setSoTimeout(10000);
     }
 
     @Override
@@ -38,7 +39,8 @@ public abstract class CSSystem implements NetWorker{
     }
 
     @Override
-    public void write() throws IOException{
+    public synchronized void write() throws IOException{
+        if(response == null)return;
         byte write[] = Coder.toBytes(response);
         if(onlyEncrypted || (flags.isCrypt() && crypt() != null))write = crypt().encodeByte(write);
         write(Coder.toAbsoluteBytes(write.length));
@@ -51,7 +53,7 @@ public abstract class CSSystem implements NetWorker{
     }
 
     @Override
-    public void read() throws IOException{
+    public synchronized void read() throws IOException{
         byte input[] = read(5);
         int size = Coder.toInt(Coder.subBytes(input, 4));
         Flags flags = new Flags(input[4]);

@@ -41,7 +41,16 @@ public class Client {
         instance = Exceptions.getThrowsEx(() -> worker.create(new Socket(host, port), this), false);
     }
 
-    public synchronized Response apply(Response response, Flags flags){
+    public void post(Response response, Flags flags){
+        Exceptions.runThrowsEx(() -> instance.post(response, flags), false);
+    }
+
+    public void post(Response response){
+        post(response, new Flags());
+    }
+
+
+    public Response apply(Response response, Flags flags){
         return Exceptions.getThrowsEx(() -> instance.apply(response, flags), false);
     }
 

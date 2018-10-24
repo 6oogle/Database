@@ -95,6 +95,10 @@ public class SignedRSA implements Byteable{
 				new RSA(sign.getBytePublicKey()), hosts, end), false);
 	}
 
+	public static SignedRSA sign(RSA constant, RSA sign, String hosts[]){
+		return sign(constant, sign, hosts, System.currentTimeMillis() + (2419200000L));
+	}
+
 	private static RSA constant = null;
 
 	public static RSA constant(){

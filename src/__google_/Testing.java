@@ -88,17 +88,19 @@ public class Testing {
 
     public static void net(){
         Server server = new Server(4000);
-        server.setCertificate(Byteable.toByteable(FileIO.readBytes("lmaomc/signed.certificate"), SignedRSA.class),
-                Byteable.toByteable(FileIO.readBytes("lmaomc/rsa.key"), RSA.class));
-        server.addExec(1, netServer -> {});
+        RSA rsa = new RSA(512);
+        server.setCertificate(new SignedRSA(null, rsa), rsa);
+        server.addExec(1, netServer -> {
+            System.out.println(Coder.toString(netServer.response().getContent()));
+            netServer.setResponse(null);
+        });
         Client client = new Client("localhost", 4000);
         client.connect();
-        client.getCertificate();
-        Response response = client.apply(new Response(1, Coder.toBytes("LolKek")), new Flags(false));
-        System.out.println(response.getType());
-        System.out.println(Coder.toString(response.getContent()));
+        client.getCertificate(true);
+        client.post(new Response(1, Coder.toBytes("LolKek")), new Flags(false));
         System.out.println(client.connected());
-        response = client.apply(new Response(1, Coder.toBytes("LolKek123")));
+        server.addExec(2, netServer -> {});
+        Response response = client.apply(new Response(2, Coder.toBytes("LolKek123")));
         System.out.println(response.getType());
         System.out.println(Coder.toString(response.getContent()));
         client.close();

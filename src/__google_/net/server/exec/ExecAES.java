@@ -12,5 +12,6 @@ public class ExecAES implements Exec{
         server.setCrypt(new AES(server.response().getContent()));
         server.setFlags(new Flags(false));
         server.postWrite((s) -> s.onlyEncrypt(true));
+        server.setResponse(null);
     }
 }

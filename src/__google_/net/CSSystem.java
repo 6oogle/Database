@@ -40,16 +40,17 @@ public abstract class CSSystem implements NetWorker{
 
     @Override
     public synchronized void write() throws IOException{
-        if(response == null)return;
+        if(response == null) {
+            if(postWrite != null)postWrite();
+            return;
+        }
         byte write[] = Coder.toBytes(response);
         if(onlyEncrypted || (flags.isCrypt() && crypt() != null))write = crypt().encodeByte(write);
         write(Coder.toAbsoluteBytes(write.length));
         write(flags.getFlags());
         write(write);
         flush();
-        if(postWrite == null)return;
-        postWrite.accept(this);
-        postWrite = null;
+        if(postWrite != null) postWrite();
     }
 
     @Override
@@ -127,5 +128,10 @@ public abstract class CSSystem implements NetWorker{
     @Override
     public boolean onlyEncrypt() {
         return onlyEncrypted;
+    }
+
+    private void postWrite(){
+        postWrite.accept(this);
+        postWrite = null;
     }
 }

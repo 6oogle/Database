@@ -64,7 +64,7 @@ public class Client {
         if(!always && !signed.checkCertificate() && !signed.existsHost(host))throw new IllegalArgumentException("Certificate not secure");
         crypt = signed.getRSA();
         AES local = new AES(32);
-        apply(new Response(125, local.getByteKey()));
+        post(new Response(125, local.getByteKey()));
         crypt = local;
         instance.onlyEncrypt(true);
     }

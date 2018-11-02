@@ -64,7 +64,7 @@ public abstract class CSSystem implements NetWorker{
         setResponse(Coder.toObject(read, Response.class));
     }
 
-    private byte[] read(int size) throws IOException{
+    protected byte[] read(int size) throws IOException{
         while (true) {
             try {
                 byte array[] = new byte[size];
@@ -78,15 +78,15 @@ public abstract class CSSystem implements NetWorker{
         }
     }
 
-    private void write(byte array[]) throws IOException{
+    protected void write(byte array[]) throws IOException{
         out.write(array);
     }
 
-    private void write(byte b) throws IOException{
+    protected void write(byte b) throws IOException{
         out.write(b);
     }
 
-    private void flush() throws IOException{
+    protected void flush() throws IOException{
         out.flush();
     }
 

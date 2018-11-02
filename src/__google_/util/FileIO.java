@@ -74,7 +74,7 @@ public class FileIO {
     }
 
     public static File getFile(String file){
-        return new File(System.getProperty("user.dir") + '/' + prefix + file);
+        return file.startsWith("/") ? new File(file) : new File(System.getProperty("user.dir") + '/' + prefix + file);
     }
 
     private static void close(InputStream in){

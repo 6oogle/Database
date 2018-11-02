@@ -405,4 +405,5 @@ public class Coder {
         if(clazz == byte[].class) return array;
         return null;
     }
+
 }

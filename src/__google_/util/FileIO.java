@@ -5,8 +5,6 @@ import java.util.List;
 
 public class FileIO {
     //Can be set something, for libraries
-    public static String prefix = "AppData/";
-
     public static void writeByteable(String strFile, Byteable byteable){
         writeByteable(getFile(strFile), byteable);
     }
@@ -122,7 +120,7 @@ public class FileIO {
     }
 
     public static File getFile(String file){
-        return file.startsWith("/") ? new File(file) : new File(System.getProperty("user.dir") + '/' + prefix + file);
+        return file.startsWith("/") ? new File(file) : new File(System.getProperty("user.dir") + '/' + file);
     }
 
     private static void close(InputStream in){

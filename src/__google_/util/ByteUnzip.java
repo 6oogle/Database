@@ -1,10 +1,10 @@
 package __google_.util;
 
 public class ByteUnzip {
-	private final byte array[];
+	private final byte[] array;
 	private int i = 0;
 
-	public ByteUnzip(byte array[]){
+	public ByteUnzip(byte[] array){
 		this.array = array;
 	}
 

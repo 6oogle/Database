@@ -285,12 +285,13 @@ public class Coder {
 
     public static byte[] getSize(int size){
         if(size < 127)return new byte[]{(byte)size};
-        return addBytes(new byte[]{(byte)127}, toAbsoluteBytes(size));
+        byte[] bytes = toBytes(size);
+        return addBytes(new byte[]{(byte)-bytes.length}, bytes);
     }
 
     public static int getSize(byte array[], int start){
         byte size = array[start];
-        if(size == 127)return toInt(subBytes(array, 4, start + 1));
+        if(size < 0)return toInt(subBytes(array, -size, start + 1));
         return size;
     }
 

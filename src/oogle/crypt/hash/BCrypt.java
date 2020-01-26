@@ -1,42 +1,27 @@
-package __google_.crypt.hash;
-
-import __google_.util.Coder;
+package oogle.crypt.hash;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-public class BCrypt extends Hasher {
+//Source https://github.com/jeremyh/jBCrypt/blob/master/src/main/java/org/mindrot/BCrypt.java
+//Author Damien Miller
+public class BCrypt extends Hash {
 	public BCrypt() {
 		super("BCrypt");
 	}
 
-	public static byte[] encode(byte bytes[], int rounds){
-		BCrypt crypt = new BCrypt();
-		return crypt.encodeByte(bytes, crypt.generateSalt(rounds, new SecureRandom(new SHA_256().encodeByte(bytes))));
-	}
-
 	@Override
 	public byte[] encodeByte(byte[] array, byte[] salt) {
-		return Coder.toBytes(encode(new String(array), salt, false));
-	}
-
-	@Override
-	public String encode(String array, byte[] salt, boolean useBase64) {
-		return encode(array, salt);
-	}
-
-	@Override
-	public String encode(String array, byte[] salt) {
-		return hashpw(array, Coder.toString(salt));
+		return hashpw(new String(array), new String(salt)).getBytes();
 	}
 
 	private String hashpw(String password, String salt) {
 		String real_salt;
 		byte passwordb[], saltb[];
 		char minor = (char)0;
-		int rounds, off = 0;
-		StringBuffer rs = new StringBuffer();
+		int rounds, off;
 
 		if (salt.charAt(0) != '$' || salt.charAt(1) != '2')
 			throw new IllegalArgumentException ("Invalid salt version");
@@ -55,13 +40,11 @@ public class BCrypt extends Hasher {
 		rounds = Integer.parseInt(salt.substring(off, off + 2));
 
 		real_salt = salt.substring(off + 3, off + 25);
-		try {
-			passwordb = (password + (minor >= 'a' ? "\000" : "")).getBytes("UTF-8");
-		} catch (UnsupportedEncodingException uee) {
-			throw new AssertionError("UTF-8 is not supported");
-		}
+		passwordb = (password + (minor >= 'a' ? "\000" : "")).getBytes(StandardCharsets.UTF_8);
 
 		saltb = Base64.getDecoder().decode(real_salt);
+
+		StringBuffer rs = new StringBuffer();
 
 		rs.append("$2");
 		if (minor >= 'a')
@@ -69,7 +52,7 @@ public class BCrypt extends Hasher {
 		rs.append("$");
 		if (rounds < 10)
 			rs.append("0");
-		rs.append(Integer.toString(rounds));
+		rs.append(rounds);
 		rs.append("$");
 		rs.append(Base64.getEncoder().encodeToString(saltb));
 		rs.append(Base64.getEncoder().encodeToString(new BCryptEntry().crypt_raw(passwordb, saltb, rounds)));
@@ -78,16 +61,16 @@ public class BCrypt extends Hasher {
 
 	@Override
 	public byte[] generateSalt(int rounds, SecureRandom random) {
-		StringBuffer rs = new StringBuffer();
+		StringBuilder rs = new StringBuilder();
 		byte rnd[] = new byte[BCRYPT_SALT_LEN];
 
 		random.nextBytes(rnd);
 		rs.append("$2a$");
 		if (rounds < 10) rs.append("0");
-		rs.append(Integer.toString(rounds));
+		rs.append(rounds);
 		rs.append("$");
 		rs.append(Base64.getEncoder().encodeToString(rnd));
-		return Coder.toBytes(rs.toString());
+		return rs.toString().getBytes();
 	}
 
 	private static class BCryptEntry{

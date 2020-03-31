@@ -17,5 +17,7 @@ public interface Decoder {
 
     double readDouble();
 
-    String readStr();
+    String readString();
+
+    boolean hasNext();
 }

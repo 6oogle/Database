@@ -1,32 +1,37 @@
-package oogle.crypt.sync;
+package oogle.crypt;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-import java.util.Base64;
+import java.security.SecureRandom;
 
-public abstract class Crypt {
-    private final String algorithm;
+public class AES {
+    private static final String algorithm = "AES";
     protected Key key;
 
-    protected Crypt(String algorithm) {
-        this.algorithm = algorithm;
+    public AES(int size, SecureRandom random){
+        byte array[] = new byte[size];
+        random.nextBytes(array);
+        this.key = new SecretKeySpec(array, getAlgorithm());
     }
 
-    protected Crypt(String algorithm, byte key[]){
-        this.algorithm = algorithm;
+    public AES(int size){
+        this(size, new SecureRandom());
+    }
+
+    public AES(byte key[]){
         this.key = new SecretKeySpec(key, algorithm);
     }
 
-    public byte[] getByteKey(){
+    public byte[] getKey(){
         return key.getEncoded();
     }
 
-    public byte[] encodeByte(byte array[]) {
+    public byte[] encode(byte array[]) {
         return cipher(array, Cipher.ENCRYPT_MODE, key);
     }
 
-    public byte[] decodeByte(byte array[]) {
+    public byte[] decode(byte array[]) {
         return cipher(array, Cipher.DECRYPT_MODE, key);
     }
 

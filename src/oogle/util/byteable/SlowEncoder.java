@@ -2,16 +2,15 @@ package oogle.util.byteable;
 
 import java.nio.charset.StandardCharsets;
 
-public class SlowEncoder implements Encoder{
+public class SlowEncoder implements BEncoder {
     private final ByteList bytes = new ByteList(), metadatas = new ByteList();
     private byte metadata;
     private byte bitMetadata;
 
     @Override
-    public Encoder writeBytes(byte[] array) {
-        writeInt(array.length);
-        for(byte b : array)
-            bytes.add(b);
+    public Encoder writeBytes(byte[] array, int offset, int size) {
+        writeInt(size);
+        bytes.add(array, offset, size);
         return this;
     }
 
@@ -50,7 +49,7 @@ public class SlowEncoder implements Encoder{
                 return this;
             }
         }
-        bytes.add((byte)(s << 8));
+        bytes.add((byte)(s >> 8));
         bytes.add((byte)s);
         return this;
     }

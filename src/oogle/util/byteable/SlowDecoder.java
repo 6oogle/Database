@@ -130,12 +130,17 @@ public class SlowDecoder implements Decoder{
     }
 
     @Override
-    public String readStr() {
+    public String readString() {
         if(usingCompressACSII) {
             boolean bool = readBoolean();
             return new String(readBytes(), bool ? StandardCharsets.US_ASCII : StandardCharsets.UTF_8);
         }
         return new String(readBytes(), StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public boolean hasNext() {
+        return array.length != i;
     }
 
     private int readIntDirectly(){

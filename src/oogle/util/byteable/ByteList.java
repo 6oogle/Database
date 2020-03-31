@@ -1,8 +1,8 @@
 package oogle.util.byteable;
 
-import java.util.*;
+import java.util.Arrays;
 
-class ByteList {
+final class ByteList {
     byte[] elementData;
     int size;
 
@@ -10,7 +10,7 @@ class ByteList {
         elementData = new byte[initialCapacity];
     }
 
-    public ByteList(){
+    public ByteList() {
         this(10);
     }
 
@@ -18,8 +18,29 @@ class ByteList {
         elementData = Arrays.copyOf(elementData, this.size * 2);
     }
 
-    public void add(byte e) {
+    private void grow(int need) {
+        int newCapacity;
+        if (need <= this.size) newCapacity = this.size * 2;
+        else newCapacity = need + size;
+        elementData = Arrays.copyOf(elementData, newCapacity);
+    }
+
+    void add(byte e) {
         if (size == elementData.length) this.grow();
         elementData[size++] = e;
+    }
+
+    void add(byte[] array) {
+        int need = size + array.length;
+        if (need >= elementData.length) grow(need);
+        System.arraycopy(array, 0, elementData, size, array.length);
+        this.size = need;
+    }
+
+    void add(byte[] array, int offset, int inputArraySize){
+        int need = size + inputArraySize;
+        if (need >= elementData.length) grow(need);
+        System.arraycopy(array, offset, elementData, size, inputArraySize);
+        this.size = need;
     }
 }

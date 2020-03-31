@@ -3,38 +3,45 @@ package oogle.util.byteable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class FastEncoder implements Encoder{
-    private ByteList bytes = new ByteList();
+public class FastEncoder implements BEncoder {
+    private final ByteList bytes;
+
+    public FastEncoder(int initialCapacity){
+        bytes = new ByteList(initialCapacity);
+    }
+
+    public FastEncoder(){
+        this(10);
+    }
 
     @Override
-    public Encoder writeBytes(byte[] array) {
-        writeInt(array.length);
-        for(int i = 0; i < array.length; i++)
-            bytes.add(array[i]);
+    public FastEncoder writeBytes(byte[] array, int offset, int size) {
+        writeInt(size);
+        bytes.add(array, offset, size);
         return this;
     }
 
     @Override
-    public Encoder writeBoolean(boolean b) {
+    public FastEncoder writeBoolean(boolean b) {
         writeByte((byte)(b ? 1 : 0));
         return this;
     }
 
     @Override
-    public Encoder writeByte(byte b) {
+    public FastEncoder writeByte(byte b) {
         bytes.add(b);
         return this;
     }
 
     @Override
-    public Encoder writeShort(short s) {
+    public FastEncoder writeShort(short s) {
         bytes.add((byte)(s >> 8));
         bytes.add((byte)s);
         return this;
     }
 
     @Override
-    public Encoder writeInt(int i) {
+    public FastEncoder writeInt(int i) {
         bytes.add((byte)(i >> 24));
         bytes.add((byte)(i >> 16));
         bytes.add((byte)(i >> 8));
@@ -43,7 +50,7 @@ public class FastEncoder implements Encoder{
     }
 
     @Override
-    public Encoder writeLong(long l) {
+    public FastEncoder writeLong(long l) {
         bytes.add((byte)(l >> 56));
         bytes.add((byte)(l >> 48));
         bytes.add((byte)(l >> 40));
@@ -56,25 +63,26 @@ public class FastEncoder implements Encoder{
     }
 
     @Override
-    public Encoder writeFloat(float f) {
+    public FastEncoder writeFloat(float f) {
         writeInt(Float.floatToIntBits(f));
         return this;
     }
 
     @Override
-    public Encoder writeDouble(double d) {
+    public FastEncoder writeDouble(double d) {
         writeLong(Double.doubleToLongBits(d));
         return this;
     }
 
     @Override
-    public Encoder writeString(String s) {
+    public FastEncoder writeString(String s) {
         writeBytes(s.getBytes(StandardCharsets.UTF_8));
         return this;
     }
 
     @Override
     public byte[] generate() {
+        if(bytes.elementData.length == bytes.size)return bytes.elementData;
         return Arrays.copyOf(bytes.elementData, bytes.size);
     }
 

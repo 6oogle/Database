@@ -19,8 +19,8 @@ public class FastDecoder implements Decoder{
     public byte[] readBytes() {
         int read = readInt();
         byte array[] = new byte[read];
-        for(int i = 0; i < read; i++)
-            array[i] = this.array[this.i++];
+        System.arraycopy(this.array, this.i, array, 0, read);
+        this.i = this.i + read;
         return array;
     }
 
@@ -62,7 +62,12 @@ public class FastDecoder implements Decoder{
     }
 
     @Override
-    public String readStr() {
+    public String readString() {
         return new String(readBytes(), StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public boolean hasNext() {
+        return array.length - 1 == i;
     }
 }

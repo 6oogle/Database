@@ -38,7 +38,7 @@ public class Converter {
         String split[] = str.split("\n");
         Map<String, String> map = new HashMap<>();
         for(String line : split){
-            String spl[] = line.split("=");
+            String spl[] = line.split("=", 2);
             if(spl.length == 1) map.put(spl[0], "");
             else map.put(spl[0], spl[1]);
         }

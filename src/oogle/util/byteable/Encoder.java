@@ -1,7 +1,12 @@
 package oogle.util.byteable;
 
 public interface Encoder {
-    Encoder writeBytes(byte array[]);
+    default Encoder writeBytes(byte array[]){
+        if(array == null) throw new IllegalArgumentException("Input array in encoder is null");
+        return writeBytes(array, 0, array.length);
+    }
+
+    Encoder writeBytes(byte array[], int offset, int size);
 
     Encoder writeBoolean(boolean b);
 
@@ -18,8 +23,4 @@ public interface Encoder {
     Encoder writeDouble(double d);
 
     Encoder writeString(String s);
-
-    byte[] generate();
-
-    int generate(byte array[], int offset);
 }

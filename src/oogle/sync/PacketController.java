@@ -48,13 +48,14 @@ public final class PacketController {
         private final List<Class<?>> classes = new LinkedList<>();
         private final List<Serializable<?>> serializables = new LinkedList<>();
 
-        public <T> void add(Class<T> packet, Serializable<T> serializable){
+        public <T> Builder add(Class<T> packet, Serializable<T> serializable){
             classes.add(packet);
             serializables.add(serializable);
+            return this;
         }
 
-        public <T> void add(Class<T> packet, BiConsumer<T, Encoder> encoder, Function<Decoder, T> decoder){
-            add(packet, Serializable.get(encoder, decoder));
+        public <T> Builder add(Class<T> packet, BiConsumer<T, Encoder> encoder, Function<Decoder, T> decoder){
+            return add(packet, Serializable.get(encoder, decoder));
         }
 
         public PacketController end(){

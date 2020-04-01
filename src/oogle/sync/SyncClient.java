@@ -74,8 +74,7 @@ public class SyncClient extends Thread{
                 channel.close();
                 return true;
             }
-            int size = (f[0] & 0xFF)
-                    | ((f[1] & 0xFF) << 8);
+            int size = ((f[0] & 0xFF) << 8) | (f[1] & 0xFF);
             byte array[] = new byte[size];
             int i = 0;
             while (i != size)

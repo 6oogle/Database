@@ -40,7 +40,7 @@ public class SyncServer extends Thread{
             while (work) {
                 tick();
             }
-        }catch (Exception ex){
+        }catch (Throwable ex){
             ex.printStackTrace();
             System.err.println("In sync input thread");
         }
@@ -85,7 +85,6 @@ public class SyncServer extends Thread{
                 try{
                     int a = stream.read(f, 0, 2);
                     if(a == -1){
-                        System.out.println("Disconnect");
                         listener.close(channel);
                         channel.close();
                         iterator.remove();
@@ -100,8 +99,7 @@ public class SyncServer extends Thread{
                     iterator.remove();
                     continue;
                 }
-                int size = (f[0] & 0xFF)
-                        | ((f[1] & 0xFF) << 8);
+                int size = ((f[0] & 0xFF) << 8) | (f[1] & 0xFF);
                 if(size == 0)continue;
                 byte array[] = new byte[size];
                 int i = 0;

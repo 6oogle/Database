@@ -28,7 +28,7 @@ final class SocketChannel implements Channel {
         try{
             FastEncoder encoder = new FastEncoder(2 + size);
             encoder.writeShort((short)size);
-            encoder.writeBytes(array);
+            encoder.writeBytes(array, offset, size);
             out.write(encoder.generate());
             out.flush();
         }catch (IOException ex){

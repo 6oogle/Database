@@ -1,7 +1,5 @@
 package oogle.sync;
 
-import oogle.util.byteable.FastEncoder;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -26,10 +24,11 @@ final class SocketChannel implements Channel {
     public void write(byte[] array, int offset, int size) {
         if(socket.isClosed())return;
         try{
-            FastEncoder encoder = new FastEncoder(2 + size);
-            encoder.writeShort((short)size);
-            encoder.writeBytes(array, offset, size);
-            out.write(encoder.generate());
+            byte newArray[] = new byte[2 + size];
+            newArray[0] = (byte)((short)size >> 8);
+            newArray[1] = (byte)size;
+            System.arraycopy(array, offset, newArray, 2, size);
+            out.write(newArray);
             out.flush();
         }catch (IOException ex){
             ex.printStackTrace();

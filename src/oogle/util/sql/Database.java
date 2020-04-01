@@ -143,6 +143,7 @@ public class Database<K, V> {
             SQLEncoder encoder = new SQLEncoder(statement, this.keyType, this.exceptions, 1);
             this.keyType.encode(encoder, key);
             ResultSet set = statement.executeQuery();
+            if(!set.next())return null;
             SQLDecoder decoder = new SQLDecoder(this.valueType, set, this.exceptions, this.keyType.size() + 1);
             return this.valueType.decode(decoder);
         } catch (SQLException var15) {

@@ -35,10 +35,9 @@ public class Converter {
 
     public static Map<String, String> toMap(String str){
         if(str == null)return new HashMap<>();
-        String split[] = str.split("\n");
         Map<String, String> map = new HashMap<>();
-        for(String line : split){
-            String spl[] = line.split("=", 2);
+        for(String line : str.split("\n")){
+            String[] spl = line.split("=", 2);
             if(spl.length == 1) map.put(spl[0], "");
             else map.put(spl[0], spl[1]);
         }
@@ -54,11 +53,7 @@ public class Converter {
     }
 
     public static List<String> toList(String str){
-        if(str == null)return new ArrayList<>();
-        String split[] = str.split("\n");
-        List<String> list = new ArrayList<>(split.length);
-        Collections.addAll(list, split);
-        return list;
+        return str == null ? Collections.emptyList() : Arrays.asList(str.split("\n"));
     }
 
     public static String toString(List<String> list){
@@ -68,4 +63,6 @@ public class Converter {
             buffer.append(line).append('\n');
         return buffer.toString();
     }
+
+    private Converter(){}
 }

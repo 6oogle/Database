@@ -39,6 +39,7 @@ public class SyncServer extends Thread{
         try {
             while (work) {
                 tick();
+                listener.tick();
             }
         }catch (Throwable ex){
             ex.printStackTrace();

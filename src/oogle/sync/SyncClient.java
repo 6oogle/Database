@@ -45,6 +45,7 @@ public class SyncClient extends Thread{
                 work = false;
                 break;
             }
+            listener.tick();
         }
     }
 

@@ -17,11 +17,8 @@ public class TypeEntry {
         return this.type;
     }
 
-    public boolean equals(TypeEntry type) {
-        if (type == null) {
-            return false;
-        } else {
-            return type.type == this.type;
-        }
+    @Override
+    public boolean equals(Object object) {
+        return object == this || (object instanceof TypeEntry && ((TypeEntry) object).type == this.type);
     }
 }

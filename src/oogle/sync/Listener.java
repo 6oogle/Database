@@ -6,4 +6,6 @@ public interface Listener {
     void open(Channel channel);
 
     void close(Channel channel);
+
+    default void tick(){}
 }

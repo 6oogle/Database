@@ -4,7 +4,7 @@ import java.io.*;
 
 public class IOUtil {
     public static IOException write(String strFile, String write){
-        return write(getFile(strFile), write);
+        return write(new File(strFile), write);
     }
 
     public static IOException write(File file, String write){
@@ -12,7 +12,7 @@ public class IOUtil {
     }
 
     public static IOException writeBytes(String strFile, byte array[]){
-        return writeBytes(getFile(strFile), array);
+        return writeBytes(new File(strFile), array);
     }
 
     public static IOException writeBytes(File file, byte array[]){
@@ -26,7 +26,7 @@ public class IOUtil {
     }
 
     public static String read(String strFile){
-        return read(getFile(strFile));
+        return read(new File(strFile));
     }
 
     public static String read(File file){
@@ -35,7 +35,7 @@ public class IOUtil {
     }
 
     public static byte[] readBytes(String strFile){
-        return readBytes(getFile(strFile));
+        return readBytes(new File(strFile));
     }
 
     public static byte[] readBytes(File file){
@@ -50,36 +50,25 @@ public class IOUtil {
     }
 
     public static boolean create(String strFile){
-        return create(getFile(strFile));
+        return create(new File(strFile));
     }
 
     public static boolean create(File file){
         try{
-            file.getParentFile().mkdirs();
-            file.getParentFile().mkdir();
-            file.createNewFile();
-            return true;
+            return  file.getParentFile().mkdirs() &&
+                    file.getParentFile().mkdir() &&
+                    file.createNewFile();
         }catch (IOException ex){
             return false;
         }
     }
 
     public static boolean remove(String strFile){
-        return remove(getFile(strFile));
+        return remove(new File(strFile));
     }
 
     public static boolean remove(File file){
         return file.delete();
-    }
-
-    public static File[] getFiles(String strFile){
-        File file = getFile(strFile);
-        if(!file.exists() || file.isDirectory())return null;
-        return file.listFiles();
-    }
-
-    public static File getFile(String file){
-        return new File(file);
     }
 
     public static byte[] readFromStream(int size, InputStream in) throws IOException {

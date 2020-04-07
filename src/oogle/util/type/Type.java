@@ -52,9 +52,8 @@ public class Type<T> {
         return builder((uuid, encoder) -> {
             encoder.writeLong(uuid.getMostSignificantBits());
             encoder.writeLong(uuid.getLeastSignificantBits());
-        }, (decoder) -> {
-            return new UUID(decoder.readLong(), decoder.readLong());
-        }).add(one, Types.LONG).add(two, Types.LONG).build();
+        }, decoder ->  new UUID(decoder.readLong(), decoder.readLong())
+        ).add(one, Types.LONG).add(two, Types.LONG).build();
     }
 
     public static <T> Type.TypeBuilder<T> builder(BiConsumer<T, Encoder> encoder, Function<Decoder, T> decoder) {
@@ -83,7 +82,7 @@ public class Type<T> {
         }
 
         public Type<T> build() {
-            return new Type((TypeEntry[])this.entries.toArray(new TypeEntry[0]), this.encoder, this.decoder);
+            return new Type<>(this.entries.toArray(new TypeEntry[0]), this.encoder, this.decoder);
         }
     }
 }

@@ -6,13 +6,19 @@ public class FastDecoder implements Decoder{
     private final byte array[];
     private int i = 0;
 
-    public FastDecoder(byte array[], int offset){
+    public FastDecoder(byte array[], int offset) {
         this.array = array;
         i = offset;
     }
 
-    public FastDecoder(byte array[]){
+    public FastDecoder(byte array[]) {
         this.array = array;
+    }
+
+    @Override
+    public byte[] readRaw(byte[] array, int offset, int size) {
+        System.arraycopy(this.array, this.i, array, offset, size);
+        return array;
     }
 
     @Override
@@ -69,5 +75,9 @@ public class FastDecoder implements Decoder{
     @Override
     public boolean hasNext() {
         return array.length - 1 == i;
+    }
+
+    public static <T> T wrap(byte[] array, Deserializer<T> deserializer) {
+        return new FastDecoder(array).read(deserializer);
     }
 }

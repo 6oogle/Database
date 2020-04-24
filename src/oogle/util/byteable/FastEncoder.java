@@ -4,14 +4,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class FastEncoder implements BEncoder {
+
     private final ByteList bytes;
 
-    public FastEncoder(int initialCapacity){
+    public FastEncoder(int initialCapacity) {
         bytes = new ByteList(initialCapacity);
     }
 
-    public FastEncoder(){
+    public FastEncoder() {
         this(10);
+    }
+
+    @Override
+    public Encoder writeRaw(byte[] array, int offset, int size) {
+        bytes.add(array, offset, size);
+        return this;
     }
 
     @Override
@@ -82,7 +89,7 @@ public class FastEncoder implements BEncoder {
 
     @Override
     public byte[] generate() {
-        if(bytes.elementData.length == bytes.size)return bytes.elementData;
+        if (bytes.elementData.length == bytes.size) return bytes.elementData;
         return Arrays.copyOf(bytes.elementData, bytes.size);
     }
 
@@ -90,5 +97,11 @@ public class FastEncoder implements BEncoder {
     public int generate(byte[] array, int offset) {
         System.arraycopy(bytes.elementData, 0, array, offset, bytes.size);
         return bytes.size;
+    }
+
+    public static byte[] wrap(Byteable byteable) {
+        FastEncoder encoder = new FastEncoder();
+        encoder.write(byteable);
+        return encoder.generate();
     }
 }

@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Util">
-    <output-path>$PROJECT_DIR$/../libs</output-path>
-    <root id="archive" name="Util.jar">
-      <element id="module-output" name="Util" />
-    </root>
-  </artifact>
-</component>

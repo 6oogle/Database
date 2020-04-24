@@ -30,13 +30,6 @@ final class ByteList {
         elementData[size++] = e;
     }
 
-    void add(byte[] array) {
-        int need = size + array.length;
-        if (need >= elementData.length) grow(need);
-        System.arraycopy(array, 0, elementData, size, array.length);
-        this.size = need;
-    }
-
     void add(byte[] array, int offset, int inputArraySize){
         int need = size + inputArraySize;
         if (need >= elementData.length) grow(need);

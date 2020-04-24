@@ -1,7 +1,11 @@
 package oogle.util.byteable;
 
-public interface BEncoder extends Encoder{
+import oogle.util.annotation.NotNull;
+
+public interface BEncoder extends Encoder {
+
+    @NotNull
     byte[] generate();
 
-    int generate(byte[] array, int offset);
+    int generate(@NotNull byte[] array, int offset);
 }

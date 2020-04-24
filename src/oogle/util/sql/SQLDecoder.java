@@ -25,6 +25,25 @@ public class SQLDecoder implements Decoder {
     }
 
     @Override
+    public byte[] readRaw(byte[] array, int offset, int size) {
+        if (this.size == this.index) {
+            this.outSize();
+        }
+
+        if (!this.type.check(this.index, Types.BYTE_ARRAY)) {
+            this.incorrectType("BYTE_ARRAY");
+        }
+        try {
+            byte[] newArray = this.set.getBytes(this.index++ + this.offset);
+            System.arraycopy(newArray, 0, array, offset, size);
+            return array;
+        } catch (SQLException var2) {
+            this.exceptions.accept(var2);
+            return null;
+        }
+    }
+
+    @Override
     public byte[] readBytes() {
         if (this.size == this.index) {
             this.outSize();

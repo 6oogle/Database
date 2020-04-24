@@ -1,40 +1,38 @@
 package oogle.sync;
 
-import oogle.util.byteable.*;
+import oogle.util.byteable.BEncoder;
+import oogle.util.byteable.Deserializer;
+import oogle.util.byteable.FastDecoder;
+import oogle.util.byteable.FastEncoder;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public final class PacketController {
+
     private final Class<?>[] classes;
-    private final Serializable<?>[] serializables;
+    private final Deserializer<?>[] deserializers;
     private final int packets;
 
-    private PacketController(Class<?>[] classes, Serializable<?>[] serializables) {
+    private PacketController(Class<?>[] classes, Deserializer<?>[] deserializers) {
         this.classes = classes;
-        this.serializables = serializables;
+        this.deserializers = deserializers;
         this.packets = classes.length;
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T decode(byte array[]){
+    public <T> T decode(byte[] array) {
         FastDecoder decoder = new FastDecoder(array);
-        int id = decoder.readInt();
-        Serializable<T> serializable = (Serializable<T>) serializables[id];
-        if(serializable == null)return null;
-        return serializable.decode(decoder);
+        return decoder.read((Deserializer<T>) deserializers[decoder.readInt()]);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> byte[] encode(T packet){
+    public <T extends Packet> byte[] encode(T packet) {
         BEncoder encoder = new FastEncoder();
         Class<?> clazz = packet.getClass();
         int id = 0;
-        for(; id < packets; id++) if(classes[id] == clazz)break;
+        for (; id < packets; id++) if (classes[id] == clazz) break;
         encoder.writeInt(id);
-        ((Serializable<T>) serializables[id]).encode(packet, encoder);
+        encoder.write(packet);
         return encoder.generate();
     }
 
@@ -45,21 +43,18 @@ public final class PacketController {
     }
 
     public static final class Builder{
-        private final List<Class<?>> classes = new LinkedList<>();
-        private final List<Serializable<?>> serializables = new LinkedList<>();
 
-        public <T> Builder add(Class<T> packet, Serializable<T> serializable){
+        private final List<Class<?>> classes = new LinkedList<>();
+        private final List<Deserializer<?>> deserializers = new LinkedList<>();
+
+        public <T> Builder add(Class<T> packet, Deserializer<T> deserializer) {
             classes.add(packet);
-            serializables.add(serializable);
+            deserializers.add(deserializer);
             return this;
         }
 
-        public <T> Builder add(Class<T> packet, BiConsumer<T, Encoder> encoder, Function<Decoder, T> decoder){
-            return add(packet, Serializable.get(encoder, decoder));
-        }
-
         public PacketController end(){
-            return new PacketController(classes.toArray(new Class[]{}), serializables.toArray(new Serializable[]{}));
+            return new PacketController(classes.toArray(new Class[]{}), deserializers.toArray(new Deserializer[]{}));
         }
     }
 }

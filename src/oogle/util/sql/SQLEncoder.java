@@ -30,6 +30,11 @@ public class SQLEncoder implements Encoder {
     }
 
     @Override
+    public Encoder writeRaw(byte[] array, int offset, int size) {
+        return writeBytes(array, offset, size);
+    }
+
+    @Override
     public Encoder writeBytes(byte[] array, int offset, int size) {
         byte[] newArray = new byte[size];
         System.arraycopy(array, offset, newArray, 0, size);

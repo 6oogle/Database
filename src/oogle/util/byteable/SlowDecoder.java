@@ -12,17 +12,25 @@ public class SlowDecoder implements Decoder{
         this.array = array;
         i = (((array[offset] & 0xFF) << 8) | (array[1 + offset] & 0xFF)) + 2 + offset;
         metadataI = 2 + offset;
-        if(i != 2) metadata = array[metadataI++];
+        if (i != 2) metadata = array[metadataI++];
     }
 
-    public SlowDecoder(byte array[]){
+    public SlowDecoder(byte array[]) {
         this(array, 0);
+    }
+
+    @Override
+    public byte[] readRaw(byte[] array, int offset, int size) {
+        int max = offset + size;
+        for (int i = offset; i < max; i++)
+            array[i] = readByte();
+        return array;
     }
 
     @Override
     public byte[] readBytes() {
         byte array[] = new byte[readInt()];
-        for(int i = 0; i < array.length; i++)
+        for (int i = 0; i < array.length; i++)
             array[i] = readByte();
         return array;
     }

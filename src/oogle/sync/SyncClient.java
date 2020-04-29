@@ -70,7 +70,6 @@ public class SyncClient extends Thread{
             }catch (SocketTimeoutException ex){
                 return false;
             }catch (SocketException ex){
-                ex.printStackTrace();
                 listener.close(channel);
                 channel.close();
                 return true;
